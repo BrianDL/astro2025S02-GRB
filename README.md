@@ -12,6 +12,6 @@ Para compilar el reporte son necesarias las siguientes bibliotecas de latex:
 luego bastará con correr
 
 ```bash
-pdflatex rgb.tex
+pdflatex grb.tex
 ```
 
