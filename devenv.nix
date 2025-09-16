@@ -34,7 +34,7 @@
     | entr -s "pdflatex -interaction=nonstopmode grb.tex && \
      bibtex grb && \
      pdflatex -interaction=nonstopmode grb.tex && \
-     pdflatex -interaction=nonstopmode $MAIN_NAME && \
+     pdflatex -interaction=nonstopmode grb.tex && \
      echo 'Compilation completed.'"
   '';
 

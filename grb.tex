@@ -37,7 +37,7 @@
 
 %% The amssymb package provides various useful mathematical symbols
 \usepackage{amssymb}
-\usepackage{lipsum}
+% \usepackage{lipsum}
 %% The amsthm package provides extended theorem environments
 %% \usepackage{amsthm}
 
@@ -126,7 +126,7 @@ Example abstract for the astronomy and computing journal. Here you provide a bri
 
 \begin{keyword}
 %% keywords here, in the form: keyword \sep keyword, up to a maximum of 6 keywords
-keyword 1 \sep keyword 2 \sep keyword 3 \sep keyword 4
+Astronomía y Astrofísica \sep Rayos Gamma \sep GRB
 
 %% PACS codes here, in the form: \PACS code \sep code
 
@@ -146,79 +146,51 @@ keyword 1 \sep keyword 2 \sep keyword 3 \sep keyword 4
 
 \section{Introduction}
 \label{introduction}
+Las eyecciones de rayos gamma son ...
 
-Here is where you provide an introduction to work and some background. For example building on previous work of image enhancment in optical astronomy \citep{vojtekova2021learning}, \cite{sweere2022deep} developed a method to improve the resolution of X-ray images from XMM-Newton to provide similar spatial resolution to Chandra.
+\section{Antecedentes}
+\label{antecedentes}
+Nos basamos en el texto de Ackermann \cite{ackermann2009}...
 
-\section{Title 2}
-%%\label{}
-\lipsum[1]
-
-\subsection{Subsection title}
-
-% \begin{figure}
-% 	\centering 
-% 	\includegraphics[width=0.4\textwidth, angle=-90]{ASCOM_journal_cover.pdf}	
-% 	\caption{Astronomy \& Computing journal cover} 
-% 	\label{fig_mom0}%
-% \end{figure}
-
-A random equation, the Toomre stability criterion:
-
-\begin{equation}
-    Q = \frac{\sigma_v \times \kappa}{\pi \times G \times \Sigma}
-\end{equation}
-
-\section{Title 3}
-%%\label{}
-\lipsum[2]
-
-\subsection{Subsection title}
-\lipsum[3]
-
-\begin{table}
-\begin{tabular}{l c c c} 
- \hline
- Source & RA (J2000) & DEC (J2000) & $V_{\rm sys}$ \\ 
-        & [h,m,s]    & [o,','']    & \kms          \\
- \hline
- NGC\,253 & 	00:47:33.120 & -25:17:17.59 & $235 \pm 1$ \\ 
- M\,82 & 09:55:52.725, & +69:40:45.78 & $269 \pm 2$ 	 \\ 
- \hline
-\end{tabular}
-\caption{Random table with galaxies coordinates and velocities, Number the tables consecutively in
-accordance with their appearance in the text and place any table notes below the table body. Please avoid using vertical rules and shading in table cells.
-}
-\label{Table1}
-\end{table}
+% \begin{table} %%%% example table
+% \begin{tabular}{l c c c} 
+%  \hline
+%  Source & RA (J2000) & DEC (J2000) & $V_{\rm sys}$ \\ 
+%         & [h,m,s]    & [o,','']    & \kms          \\
+%  \hline
+%  NGC\,253 & 	00:47:33.120 & -25:17:17.59 & $235 \pm 1$ \\ 
+%  M\,82 & 09:55:52.725, & +69:40:45.78 & $269 \pm 2$ 	 \\ 
+%  \hline
+% \end{tabular}
+% \caption{Random table with galaxies coordinates and velocities, Number the tables consecutively in
+% accordance with their appearance in the text and place any table notes below the table body. Please avoid using vertical rules and shading in table cells.
+% }
+% \label{Table1}
+% \end{table}
 
 
-\section{Discussion}
-%%\label{}
-\lipsum[4]
-
-\section{Summary and conclusions}
-%%\label{}
-\lipsum[1-4]
+\section{Metodología}
+\label{metodología}
 
 
-\section*{Acknowledgements}
-Thanks to ...
+\section{Resultados y Discusión}
+\label{resultados}
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
-\appendix
+% \appendix
 
-\section{Appendix title 1}
+% \section{Appendix title 1}
 %% \label{}
 
-\section{Appendix title 2}
+% \section{Appendix title 2}
 %% \label{}
 
 %% If you have bibdatabase file and want bibtex to generate the
 %% bibitems, please use
 %%
 \bibliographystyle{elsarticle-harv} 
-\bibliography{example}
+\bibliography{bibliography}
 
 %% else use the following coding to input the bibitems directly in the
 %% TeX file.
