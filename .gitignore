@@ -219,4 +219,4 @@ devenv.local.nix
 *.spl
 *.bbl
 *.blg
-.synctex.gz
+*.gz
