@@ -27,6 +27,33 @@ docs = ["Sphinx (==5.0.2)", "astropy-sphinx-theme", "nbsphinx", "sphinx-automoda
 test = ["pytest"]
 
 [[package]]
+name = "astro-gdt-fermi"
+version = "2.2.0"
+description = "Gamma-ray Data Tools: Fermi Mission"
+optional = false
+python-versions = ">=3.11"
+groups = ["main"]
+files = [
+    {file = "astro_gdt_fermi-2.2.0-py3-none-any.whl", hash = "sha256:e0b77d22cb30a80ff3d80c0350bb244370027f70caa2b005d86a27acc7bc67f9"},
+    {file = "astro_gdt_fermi-2.2.0.tar.gz", hash = "sha256:7e6865bcaea690c5ce3cf43128fac8fe6a2e2ba6fca4746bcf274f32dfab8c27"},
+]
+
+[package.dependencies]
+astro-gdt = ">=2.2.0"
+astropy = ">=7.0.0,<7.1.0"
+cartopy = ">=0.21.1"
+healpy = ">=1.18.0,<1.19.0"
+matplotlib = ">=3.10.0,<3.11.0"
+numpy = ">=2.2.3,<2.3.0"
+pyproj = ">=1.9.6"
+rich = ">=13.3.3"
+scipy = ">=1.15.2,<1.16.0"
+
+[package.extras]
+docs = ["Sphinx (==5.0.2)", "astropy-sphinx-theme", "nbsphinx", "sphinx-automodapi"]
+test = ["pytest"]
+
+[[package]]
 name = "astropy"
 version = "7.0.2"
 description = "Astronomy and astrophysics core library"
@@ -1173,4 +1200,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
-content-hash = "1d6e78bec5cc5630f2c9b3dcc913cccce4ae91847cfaf92af07ca78da7e7b184"
+content-hash = "e1ddeecba2adb4b4034386205b42137c0b046958f06d27fd12a8eb41f3698010"
