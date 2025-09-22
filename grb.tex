@@ -31,6 +31,15 @@
 %% \documentclass[final,5p,times,authoryear]{elsarticle}
 \documentclass[final,5p,times,twocolumn,authoryear]{elsarticle}
 
+%--- idioma -----------------------------------------------------------
+\usepackage[spanish]{babel}          % opcional: traducir los encabezados
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%--- redefinir los encabezados ----------------------------------------
+\abstracttitle{Resumen}
+\keywordtitle{Palabras clave}
+
 %% For including figures, graphicx.sty has been loaded in
 %% elsarticle.cls. If you prefer to use the old commands
 %% please give \usepackage{epsfig}
@@ -111,9 +120,7 @@
 
 \author[second]{Brian Leiva}
 \affiliation[second]{organization={ECFM, Universidad de San Carlos de Guatemala},%Department and Organization
-            addressline={}, 
             city={Guatemala},
-            postcode={}, 
             state={Guatemala},
             country={Guatemala}}
 
@@ -143,7 +150,9 @@ Example abstract for the astronomy and computing journal. Here you provide a bri
 
 \begin{keyword}
 %% keywords here, in the form: keyword \sep keyword, up to a maximum of 6 keywords
-Astronomía y Astrofísica \sep Rayos Gamma \sep GRB
+gamma-ray burst: individual: GRB 090926A \sep Astrophysics - High Energy Astrophysical Phenomena \sep Astrophysics - Cosmology and Nongalactic Astrophysics 
+
+
 
 %% PACS codes here, in the form: \PACS code \sep code
 
