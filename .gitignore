@@ -221,3 +221,7 @@ devenv.local.nix
 *.blg
 *.gz
 *.npz
+
+papers
+*.whl
+.vscode
