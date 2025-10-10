@@ -225,3 +225,5 @@ devenv.local.nix
 papers
 *.whl
 .vscode
+
+prueba
