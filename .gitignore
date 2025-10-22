@@ -227,3 +227,5 @@ papers
 .vscode
 
 prueba
+
+*.out
