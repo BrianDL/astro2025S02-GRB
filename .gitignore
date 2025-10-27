@@ -229,3 +229,4 @@ papers
 prueba
 
 *.out
+spectral_analysis.py:Zone.Identifier
