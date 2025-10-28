@@ -65,8 +65,8 @@ class GRBSpectralAnalysis:
         
         # Analysis parameters
         self.bkgd_range = [(-50, -10), (30, 100)]  # Background intervals
-        self.energy_range_nai = (8, 900)  # NaI energy range (keV)
-        self.energy_range_bgo = (325, 35000)  # BGO energy range (keV)
+        self.energy_range_nai = (8, 300)  # NaI energy range (keV)
+        self.energy_range_bgo = (325, 9500)  # BGO energy range (keV)
         self.src_range = (1, 2)  # Source interval for spectral analysis
         
     def load_data(self):
