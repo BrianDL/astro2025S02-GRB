@@ -225,6 +225,8 @@ class GRBSpectralAnalysis:
     def fit_multiple_time_ranges(self, start_time=1, end_time=20, **kwargs):
         """Iterate over multiple time ranges and fit spectra for each"""
 
+        assert 0 < start_time < end_time, "Invalid time range"
+
         max_beta = kwargs.get('max_beta', self.max_beta)
         duration = kwargs.get('duration', self.min_bin_size)
 
@@ -247,9 +249,13 @@ class GRBSpectralAnalysis:
             self.fit_background()
         
         # Iterate over time ranges
-        for i in range(start_time, end_time + 1, duration):
-            t_start = i
-            t_end = i + duration -1
+        # for i in range(start_time, end_time + 1, duration):
+        
+        t_start = start_time
+        t_end = start_time
+
+        while t_start < end_time:
+            t_end += duration
             
             print(f"\n--- Time Range {i-start_time+1}/{end_time-start_time+1}: {t_start}-{t_end}s ---")
             
@@ -379,6 +385,8 @@ class GRBSpectralAnalysis:
                     'successful_fit': False
                 }
                 results.append(result)
+
+            t_start = t_end
         
         # Save results to CSV
         self.save_results_to_csv(results, start_time, end_time, duration)
@@ -473,7 +481,7 @@ def main():
     grb_analysis = GRBSpectralAnalysis(
 
             '090926181'      ### object name
-            , min_bin_size=2 ### initial value for adaptive bin size
+            , min_bin_size=0.5 ### initial value for adaptive bin size
         
         )
     
