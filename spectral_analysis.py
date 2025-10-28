@@ -10,6 +10,7 @@ This script performs spectral analysis of GRB data including:
 """
 
 import os
+import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
@@ -391,8 +392,10 @@ class GRBSpectralAnalysis:
         print(f"Saving results to CSV file...")
         
         # Create filename
-        filename = f'spectral_evolution_{self.object_name}_{start_time}-{end_time}s_{duration}s_duration.csv'
-        
+        filename = \
+            f'spectral_evolution_{self.object_name}_{start_time}-{end_time}s_{duration}s_duration.csv'
+        filename = get_arg('out', filename)
+
         # Define CSV headers
         headers = [
             'time_start', 'time_end', 'time_center', 'duration', 'total_counts',
@@ -445,6 +448,14 @@ class GRBSpectralAnalysis:
         """Run time evolution analysis across multiple time ranges"""
         duration = kwargs.get('duration', self.min_bin_size)
         return self.fit_multiple_time_ranges(start_time, end_time, duration=duration)
+
+
+def get_arg(arg_name:str, default:str=None)->str:
+    try:
+        idx = sys.argv.index(f"--{arg_name}")
+        return sys.argv[idx+1]
+    except (ValueError, IndexError):
+        return default
 
 
 def main():
