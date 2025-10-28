@@ -28,8 +28,13 @@ from gdt.core.spectra.functions import Band
 class GRBSpectralAnalysis:
     """Class for GRB spectral analysis using Fermi-GBM data"""
     
-    def __init__(self, object_no='090926181'):
+    def __init__(self, object_no='090926181', **kwargs):
         """Initialize analysis with GRB identifier"""
+
+        self.max_beta = kwargs.get('max_beta', -0.2)
+        self.min_bin_size = kwargs.get('min_bin_size', 2)
+        self.bkg_fit_degree = kwargs.get('bkg_fit_degree', 2)
+
         self.object_no = object_no
         self.object_name = f'bn{object_no}'
         self.setup_paths()
@@ -105,7 +110,7 @@ class GRBSpectralAnalysis:
         )
         
         # Perform 0th order polynomial fit
-        self.backfitters.fit(order=0)
+        self.backfitters.fit(order=self.bkg_fit_degree)
         
         # Calculate chi-squared for quality assessment
         # chisq_dof = self.backfitters.statistic()[0] / self.backfitters.dof()[0]
@@ -149,9 +154,11 @@ class GRBSpectralAnalysis:
             rsp.interpolate(pha.tcent) for rsp, pha in zip(self.rsps, self.phas)
         ]
         
-    def fit_spectrum(self):
+    def fit_spectrum(self, **kwargs):
         """Perform spectral fitting with Band function"""
         print("Performing spectral fitting...")
+
+        max_beta = kwargs.get('max_beta', self.max_beta)
         
         # Initialize spectral fitter
         self.specfitter = SpectralFitterPgstat(
@@ -161,6 +168,8 @@ class GRBSpectralAnalysis:
         # Initialize Band function
         self.band = Band()
         
+        self.band.max_values[3] = max_beta
+
         # Print Band function parameters
         print("Band function parameters:")
         print(f"Parameter list: {self.band.param_list}")
@@ -211,8 +220,12 @@ class GRBSpectralAnalysis:
         for specplot, src_spec in zip(specplots, self.src_specs):
             specplot.add_selection(src_spec)
             
-    def fit_multiple_time_ranges(self, start_time=1, end_time=20, duration=2):
+    def fit_multiple_time_ranges(self, start_time=1, end_time=20, **kwargs):
         """Iterate over multiple time ranges and fit spectra for each"""
+
+        max_beta = kwargs.get('max_beta', self.max_beta)
+        duration = kwargs.get('duration', self.min_bin_size)
+
         print("="*60)
         print("MULTIPLE TIME RANGE SPECTRAL ANALYSIS")
         print("="*60)
@@ -260,15 +273,6 @@ class GRBSpectralAnalysis:
                     bgo_kwargs={'energy_range': self.energy_range_bgo}
                 )
                 
-                # Check if we have sufficient counts
-                # total_counts = sum(sum(pha.counts) for pha in phas)
-                # print(f"Total counts: {total_counts}")
-                
-                # if total_counts < 50:  # Minimum counts threshold
-                #     print("Skipping - insufficient counts (< 50)")
-                #     failed_fits += 1
-                #     continue
-                
                 # Interpolate response matrices at time center
                 time_center = (t_start + t_end) / 2
                 rsps_interp = [
@@ -282,6 +286,9 @@ class GRBSpectralAnalysis:
                 
                 # Initialize and fit Band function
                 band = Band()
+
+                band.max_values[3] = max_beta
+                
                 specfitter.fit(band, options={'maxiter': 1000})
                 
                 # Get results
@@ -384,7 +391,7 @@ class GRBSpectralAnalysis:
         print(f"Saving results to CSV file...")
         
         # Create filename
-        filename = f'spectral_evolution_{self.object_name}_{start_time}-{end_time}s_{duration}s_duration.csv'
+        filename = f'v2_spectral_evolution_{self.object_name}_{start_time}-{end_time}s_{duration}s_duration.csv'
         
         # Define CSV headers
         headers = [
@@ -434,45 +441,31 @@ class GRBSpectralAnalysis:
         
         return parameters, errors
         
-    def run_time_evolution_analysis(self, start_time=1, end_time=20, duration=2):
+    def run_time_evolution_analysis(self, start_time=1, end_time=20, **kwargs):
         """Run time evolution analysis across multiple time ranges"""
-        return self.fit_multiple_time_ranges(start_time, end_time, duration)
+        duration = kwargs.get('duration', self.min_bin_size)
+        return self.fit_multiple_time_ranges(start_time, end_time, duration=duration)
 
 
 def main():
     """Main function to run analysis"""
+    
     # Create analysis instance
-    grb_analysis = GRBSpectralAnalysis('090926181')
+    grb_analysis = GRBSpectralAnalysis(
+
+            '090926181'      ### object name
+            , min_bin_size=2 ### initial value for adaptive bin size
+        
+        )
     
-    print("Choose analysis mode:")
-    print("1. Single time range analysis (1-2s)")
-    print("2. Time evolution analysis (1-20s)")
-    
-    # For now, run time evolution analysis as requested
     print("\nRunning time evolution analysis (1-20s)...")
     
     # Run time evolution analysis
-    results = grb_analysis.run_time_evolution_analysis(start_time=1, end_time=20, duration=2)
+    results = grb_analysis.run_time_evolution_analysis(start_time=1, end_time=20)
     
     print(f"\nTime evolution analysis complete!")
     print(f"Total time ranges analyzed: {len(results)}")
     print(f"Results saved to CSV file")
-    
-    # Also run single analysis for comparison
-    print("\nRunning single time range analysis for comparison...")
-    try:
-        parameters, errors = grb_analysis.run_full_analysis()
-        
-        # Print final results
-        print("\nSingle Range Spectral Parameters (1-2s):")
-        param_names = ['A', 'Epeak', 'alpha', 'beta', 'Epiv']
-        for i, (name, param, error) in enumerate(zip(param_names, parameters, errors)):
-            if i < len(error):
-                print(f"{name}: {param:.3e} (+{error[1]:.3e}, -{error[0]:.3e})")
-            else:
-                print(f"{name}: {param:.3e}")
-    except Exception as e:
-        print(f"Single range analysis failed: {e}")
     
     return results
 
