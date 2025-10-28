@@ -257,7 +257,7 @@ class GRBSpectralAnalysis:
         while t_start < end_time:
             t_end += duration
             
-            print(f"\n--- Time Range {i-start_time+1}/{end_time-start_time+1}: {t_start}-{t_end}s ---")
+            print(f"\n--- Time Range: {t_start}-{t_end}s ---")
             
             # Define current time range
             current_range = (t_start, t_end)
@@ -315,7 +315,9 @@ class GRBSpectralAnalysis:
 
                 if epeak_err == np.inf:
                     print("ERRROR_HIGH:", epeak_err)
-                    
+                    if int((t_end - t_start)) == 3:
+                        raise ValueError("Fit Not Found in 3s")
+
                     continue
 
                 # Store results
@@ -323,7 +325,7 @@ class GRBSpectralAnalysis:
                     'time_start': t_start,
                     'time_end': t_end,
                     'time_center': time_center,
-                    'duration': duration,
+                    'duration': t_end - t_start,
                     # 'total_counts': 0, ### fix: total_counts,
                     'amplitude': parameters[0] if len(parameters) > 0 else np.nan,
                     'amplitude_err_low': errors[0][0] if len(errors) > 0 and len(errors[0]) > 0 else np.nan,
@@ -384,7 +386,9 @@ class GRBSpectralAnalysis:
                     'fit_message': str(e),
                     'successful_fit': False
                 }
-                results.append(result)
+                
+                if '--include-errors' in sys.argv:
+                    results.append(result)
 
             t_start = t_end
         
