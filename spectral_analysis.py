@@ -391,7 +391,7 @@ class GRBSpectralAnalysis:
         print(f"Saving results to CSV file...")
         
         # Create filename
-        filename = f'v2_spectral_evolution_{self.object_name}_{start_time}-{end_time}s_{duration}s_duration.csv'
+        filename = f'spectral_evolution_{self.object_name}_{start_time}-{end_time}s_{duration}s_duration.csv'
         
         # Define CSV headers
         headers = [
