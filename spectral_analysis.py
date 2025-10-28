@@ -35,6 +35,7 @@ class GRBSpectralAnalysis:
         self.max_beta = kwargs.get('max_beta', -0.2)
         self.min_bin_size = kwargs.get('min_bin_size', 2)
         self.bkg_fit_degree = kwargs.get('bkg_fit_degree', 2)
+        self.bin_size_adaptive = kwargs.get('bin_size_adaptive', True)
 
         self.object_no = object_no
         self.object_name = f'bn{object_no}'
@@ -252,44 +253,43 @@ class GRBSpectralAnalysis:
             
             print(f"\n--- Time Range {i-start_time+1}/{end_time-start_time+1}: {t_start}-{t_end}s ---")
             
+            # Define current time range
+            current_range = (t_start, t_end)
+            
+            # Extract spectra for this time range
+            data_specs = self.cspecs.to_spectrum(time_range=current_range)
+            bkgd_specs = self.bkgds.integrate_time(*current_range)
+            
+            # Apply energy selection
+            src_specs = self.cspecs.to_spectrum(
+                time_range=current_range, 
+                nai_kwargs={'energy_range': self.energy_range_nai}, 
+                bgo_kwargs={'energy_range': self.energy_range_bgo}
+            )
+            
+            # Convert to PHA format
+            phas = self.cspecs.to_pha(
+                time_ranges=current_range, 
+                nai_kwargs={'energy_range': self.energy_range_nai}, 
+                bgo_kwargs={'energy_range': self.energy_range_bgo}
+            )
+            
+            # Interpolate response matrices at time center
+            time_center = (t_start + t_end) / 2
+            rsps_interp = [
+                rsp.interpolate(time_center) for rsp in self.rsps
+            ]
+            
+            # Initialize spectral fitter
+            specfitter = SpectralFitterPgstat(
+                phas, self.bkgds.to_list(), rsps_interp, method='TNC'
+            )
+            
+            # Initialize and fit Band function
+            band = Band()
+            band.max_values[3] = max_beta
+                
             try:
-                # Define current time range
-                current_range = (t_start, t_end)
-                
-                # Extract spectra for this time range
-                data_specs = self.cspecs.to_spectrum(time_range=current_range)
-                bkgd_specs = self.bkgds.integrate_time(*current_range)
-                
-                # Apply energy selection
-                src_specs = self.cspecs.to_spectrum(
-                    time_range=current_range, 
-                    nai_kwargs={'energy_range': self.energy_range_nai}, 
-                    bgo_kwargs={'energy_range': self.energy_range_bgo}
-                )
-                
-                # Convert to PHA format
-                phas = self.cspecs.to_pha(
-                    time_ranges=current_range, 
-                    nai_kwargs={'energy_range': self.energy_range_nai}, 
-                    bgo_kwargs={'energy_range': self.energy_range_bgo}
-                )
-                
-                # Interpolate response matrices at time center
-                time_center = (t_start + t_end) / 2
-                rsps_interp = [
-                    rsp.interpolate(time_center) for rsp in self.rsps
-                ]
-                
-                # Initialize spectral fitter
-                specfitter = SpectralFitterPgstat(
-                    phas, self.bkgds.to_list(), rsps_interp, method='TNC'
-                )
-                
-                # Initialize and fit Band function
-                band = Band()
-
-                band.max_values[3] = max_beta
-                
                 specfitter.fit(band, options={'maxiter': 1000})
                 
                 # Get results
@@ -300,17 +300,25 @@ class GRBSpectralAnalysis:
                 
                 # Calculate derived parameter Epeak if not directly fitted
                 if len(parameters) >= 2:
-                    epeak = parameters[1]  # Epeak is often the second parameter
+                    epeak = parameters[1]
                 else:
                     epeak = np.nan
                 
+                if len(errors) > 1 and len(errors[1]) > 1:
+                    epeak_err = errors[1][1]
+
+                if epeak_err == np.inf:
+                    print("ERRROR_HIGH:", epeak_err)
+                    
+                    continue
+
                 # Store results
                 result = {
                     'time_start': t_start,
                     'time_end': t_end,
                     'time_center': time_center,
                     'duration': duration,
-                    'total_counts': 0, ### fix: total_counts,
+                    # 'total_counts': 0, ### fix: total_counts,
                     'amplitude': parameters[0] if len(parameters) > 0 else np.nan,
                     'amplitude_err_low': errors[0][0] if len(errors) > 0 and len(errors[0]) > 0 else np.nan,
                     'amplitude_err_high': errors[0][1] if len(errors) > 0 and len(errors[0]) > 1 else np.nan,
@@ -351,7 +359,7 @@ class GRBSpectralAnalysis:
                     'time_end': t_end,
                     'time_center': (t_start + t_end) / 2,
                     'duration': duration,
-                    'total_counts': np.nan,
+                    # 'total_counts': np.nan,
                     'amplitude': np.nan,
                     'amplitude_err_low': np.nan,
                     'amplitude_err_high': np.nan,
@@ -398,7 +406,7 @@ class GRBSpectralAnalysis:
 
         # Define CSV headers
         headers = [
-            'time_start', 'time_end', 'time_center', 'duration', 'total_counts',
+            'time_start', 'time_end', 'time_center', 'duration', #'total_counts',
             'amplitude', 'amplitude_err_low', 'amplitude_err_high',
             'epeak', 'epeak_err_low', 'epeak_err_high',
             'alpha', 'alpha_err_low', 'alpha_err_high',
@@ -435,8 +443,8 @@ class GRBSpectralAnalysis:
         parameters, errors = self.fit_spectrum()
         
         # Plot results
-        self.plot_spectrum_fit()
-        self.plot_spectra_with_background()
+        # self.plot_spectrum_fit()
+        # self.plot_spectra_with_background()
         
         print("="*60)
         print("Analysis Complete!")
