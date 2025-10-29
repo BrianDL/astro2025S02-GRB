@@ -23,7 +23,7 @@ from gdt.core.background.binned import Polynomial
 from gdt.core.plot.spectrum import Spectrum
 from gdt.core.plot.model import ModelFit
 from gdt.core.spectra.fitting import SpectralFitterPgstat, SpectralFitterCstat
-from gdt.core.spectra.functions import Band
+from gdt.core.spectra.functions import Band, Comptonized, BlackBody, PowerLaw
 
 
 class GRBSpectralAnalysis:
@@ -146,7 +146,7 @@ class GRBSpectralAnalysis:
         ]
         
     def fit_spectrum(self, **kwargs):
-        """Perform spectral fitting with Band function"""
+        """Perform spectral fitting with the selected function"""
         print("Performing spectral fitting...")
 
         max_beta = kwargs.get('max_beta', self.max_beta)
@@ -157,21 +157,22 @@ class GRBSpectralAnalysis:
             self.phas, self.bkgds.to_list(), self.rsps_interp, method='TNC'
         )
         
-        # Initialize Band function
-        self.band = Band()
+        # Initialize function
+        self.fit_function = Band() if '--use-band' in sys.argv \
+            else Comptonized() + BlackBody() + PowerLaw()
         
-        self.band.max_values[3] = max_beta
+        self.fit_function.max_values[3] = max_beta
 
         # Print Band function parameters
         print("Band function parameters:")
-        print(f"Parameter list: {self.band.param_list}")
-        print(f"Default values: {self.band.default_values}")
-        print(f"Min values: {self.band.min_values}")
-        print(f"Max values: {self.band.max_values}")
+        print(f"Parameter list: {self.fit_function.param_list}")
+        print(f"Default values: {self.fit_function.default_values}")
+        print(f"Min values: {self.fit_function.min_values}")
+        print(f"Max values: {self.fit_function.max_values}")
         
         # Perform fit
         print("Fitting Band function...")
-        self.specfitter.fit(self.band, options={'maxiter': 1000})
+        self.specfitter.fit(self.fit_function, options={'maxiter': 1000})
         
         # Display results
         print(f"Fit message: {self.specfitter.message}")
@@ -241,8 +242,8 @@ class GRBSpectralAnalysis:
         # Iterate over time ranges
         # for i in range(start_time, end_time + 1, duration):
         
-        t_start = start_time
-        t_end = start_time
+        t_start:float = start_time
+        t_end:float = start_time
 
         while t_start < end_time:
             t_end += duration
@@ -305,8 +306,8 @@ class GRBSpectralAnalysis:
 
                 if epeak_err == np.inf:
                     print("ERRROR_HIGH:", epeak_err)
-                    if int((t_end - t_start)) == 3:
-                        raise ValueError("Fit Not Found in 3s")
+                    if t_end >= end_time:
+                        raise ValueError("Fit Not Found in the rest of the interval")
 
                     continue
 
@@ -316,7 +317,7 @@ class GRBSpectralAnalysis:
                     'time_end': t_end,
                     'time_center': time_center,
                     'duration': t_end - t_start,
-                    'total_counts': np.nan, ### fix: total_counts,
+                    'total_counts': 0, ### fix: total_counts,
                     'amplitude': parameters[0] if len(parameters) > 0 else np.nan,
                     'amplitude_err_low': errors[0][0] if len(errors) > 0 and len(errors[0]) > 0 else np.nan,
                     'amplitude_err_high': errors[0][1] if len(errors) > 0 and len(errors[0]) > 1 else np.nan,
