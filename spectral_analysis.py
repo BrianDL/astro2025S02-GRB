@@ -1,12 +1,62 @@
 #!/usr/bin/env python3
 """
-Spectral Analysis Script for GRB 090926181
-Based on analisis_espectral_multiple.ipynb
+Spectral Analysis Script
 
-This script performs spectral analysis of GRB data including:
-- Data loading from multiple detectors
-- Background estimation and subtraction
-- Spectral fitting with Band function
+This script performs a time‑resolved spectral analysis of Fermi‑GBM data,
+including:
+- loading CSPEC data from all selected NaI (and optionally BGO) detectors,
+- estimating and subtracting the background,
+- fitting the spectra.
+
+Script options (all are supplied as ``--option value`` on the command line):
+
+--out <filename>
+    Name of the CSV file that will receive the fitting results.
+    If omitted the script builds a default name of the form:
+    ``spectral_evolution_<object>_<t_start>-<t_end>s_<duration>s_duration.csv``.
+    (Default: generated automatically as described above.)
+
+--bin-size <size>
+    Minimal adaptive bin size (seconds) used when the script divides the
+    user‑defined interval into sub‑intervals for time‑resolved fitting.
+    The default is **0.25 s** unless the user provides a different value.
+
+--stat <stat>
+    Choose the fit statistic: ``cstat`` or ``pgstat``.  Default is ``cstat``.
+    
+--ignore-bgo
+    When present the script excludes the BGO detector (``b0``) from both
+    the data loading and response‑matrix loading steps.  By default BGO data
+    are **included**.
+
+--use-band
+    Forces the spectral fitter to use a single ``Band`` function.
+    If this flag is absent the script fits a model consisting of
+    ``Comptonized`` + ``BlackBody`` + ``PowerLaw``.  Default behavior is the
+    multi‑component model.
+
+--include-errors
+    If supplied, failed fits are written to the CSV with NaN values and the
+    error message; otherwise only successful fits are saved.  Default is to
+    omit failed‑fit entries.
+
+Additional defaults used internally (not exposed as command‑line flags):
+
+* max_beta  = -0.2            # Upper bound for the Band high‑energy index
+* min_bin_size = 2           # Default duration per time segment if not overridden
+* bkg_fit_degree = 2         # Polynomial order for background fitting
+* bin_size_adaptive = True   # Enables adaptive binning in the analysis class
+* bkgd_range = [(-50, -10), (30, 100)]   # Background intervals (seconds)
+* energy_range_nai = (8, 300)   # NaI detector energy range (keV)
+* energy_range_bgo = (325, 9500) # BGO detector energy range (keV)
+
+Usage example:
+    $ python spectral_analysis.py --out my_results.csv --bin-size 0.5 \\
+        --use-band --include-errors
+
+The script will analyse the interval 1–20 s (hard‑coded in ``main()``),
+divide it into 0.5‑s bins, fit each segment with the Band function, and
+write the results to *my_results.csv*.
 """
 
 import os
@@ -36,6 +86,11 @@ class GRBSpectralAnalysis:
         self.min_bin_size = kwargs.get('min_bin_size', 2)
         self.bkg_fit_degree = kwargs.get('bkg_fit_degree', 2)
         self.bin_size_adaptive = kwargs.get('bin_size_adaptive', True)
+        
+        # Analysis parameters
+        self.bkgd_range = [(-50, -10), (30, 100)]  # Background intervals
+        self.energy_range_nai = (8, 300)  # NaI energy range (keV)
+        self.energy_range_bgo = (325, 9500)  # BGO energy range (keV)
 
         self.object_no = object_no
         self.object_name = f'bn{object_no}'
@@ -65,12 +120,6 @@ class GRBSpectralAnalysis:
         if '--ignore-bgo' not in sys.argv:
             self.filepaths_rsp.append(f"{common_str}b0_{self.object_name}_v00.rsp2")
         
-        # Analysis parameters
-        self.bkgd_range = [(-50, -10), (30, 100)]  # Background intervals
-        self.energy_range_nai = (8, 300)  # NaI energy range (keV)
-        self.energy_range_bgo = (325, 9500)  # BGO energy range (keV)
-        self.src_range = (1, 2)  # Source interval for spectral analysis
-        
     def load_data(self):
         """Load CSPEC and response data"""
         print("Loading CSPEC data...")
@@ -84,8 +133,6 @@ class GRBSpectralAnalysis:
         )
         
         print("Data loading complete!")
-        
-    
         
     def fit_background(self):
         """Fit background using polynomial models"""
@@ -156,8 +203,8 @@ class GRBSpectralAnalysis:
             current_range = (t_start, t_end)
             
             # Extract spectra for this time range
-            data_specs = self.cspecs.to_spectrum(time_range=current_range)
-            bkgd_specs = self.bkgds.integrate_time(*current_range)
+            # data_specs = self.cspecs.to_spectrum(time_range=current_range)
+            # bkgd_specs = self.bkgds.integrate_time(*current_range)
             
             # Apply energy selection
             # src_specs = self.cspecs.to_spectrum(
@@ -180,7 +227,11 @@ class GRBSpectralAnalysis:
             ]
             
             # Initialize spectral fitter
-            specfitter = SpectralFitterPgstat(
+            stat = get_arg('stat', 'cstat')
+            specfitter_funct = SpectralFitterPgstat \
+                if stat=='pgstat' else SpectralFitterCstat
+
+            specfitter = specfitter_funct(
                 phas, self.bkgds.to_list(), rsps_interp, method='TNC'
             )
             
