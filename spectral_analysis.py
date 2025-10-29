@@ -22,7 +22,7 @@ from gdt.core.background.fitter import BackgroundFitter
 from gdt.core.background.binned import Polynomial
 from gdt.core.plot.spectrum import Spectrum
 from gdt.core.plot.model import ModelFit
-from gdt.core.spectra.fitting import SpectralFitterPgstat
+from gdt.core.spectra.fitting import SpectralFitterPgstat, SpectralFitterCstat
 from gdt.core.spectra.functions import Band
 
 
@@ -47,21 +47,23 @@ class GRBSpectralAnalysis:
         # CSPEC file paths
         common_str = f'datos/{self.object_no}/glg_cspec_'
         self.filepaths_cspec = [
-            f"{common_str}b0_{self.object_name}_v00.pha",  # BGO detector
-            f"{common_str}n0_{self.object_name}_v00.pha",  # NaI detectors
-            f"{common_str}n1_{self.object_name}_v00.pha",
-            f"{common_str}n3_{self.object_name}_v00.pha",
+            f"{common_str}n3_{self.object_name}_v00.pha",  # NaI detectors
             f"{common_str}n6_{self.object_name}_v00.pha",
             f"{common_str}n7_{self.object_name}_v00.pha"
         ]
+        
+        if '--ignore-bgo' not in sys.argv:  # Only include BGO if not ignoring
+            self.filepaths_cspec.append(f"{common_str}b0_{self.object_name}_v00.pha")
         
         # Response file paths
         self.filepaths_rsp = [
             f"{common_str}n3_{self.object_name}_v00.rsp2",
             f"{common_str}n6_{self.object_name}_v00.rsp2",
-            f"{common_str}n7_{self.object_name}_v00.rsp2",
-            f"{common_str}b0_{self.object_name}_v00.rsp2"
+            f"{common_str}n7_{self.object_name}_v00.rsp2"
         ]
+        
+        if '--ignore-bgo' not in sys.argv:
+            self.filepaths_rsp.append(f"{common_str}b0_{self.object_name}_v00.rsp2")
         
         # Analysis parameters
         self.bkgd_range = [(-50, -10), (30, 100)]  # Background intervals
@@ -72,27 +74,14 @@ class GRBSpectralAnalysis:
     def load_data(self):
         """Load CSPEC and response data"""
         print("Loading CSPEC data...")
-        # Load CSPEC data (subset of detectors used in notebook)
-        self.cspec_b0 = GbmPhaii.open(self.filepaths_cspec[0])
-        self.cspec_n3 = GbmPhaii.open(self.filepaths_cspec[3])
-        self.cspec_n6 = GbmPhaii.open(self.filepaths_cspec[4])
-        self.cspec_n7 = GbmPhaii.open(self.filepaths_cspec[5])
-        
-        # Create detector collection
-        self.cspecs = GbmDetectorCollection.from_list([
-            self.cspec_n3, self.cspec_n6, self.cspec_n7, self.cspec_b0
-        ])
+        self.cspecs = GbmDetectorCollection.from_list(
+            [ GbmPhaii.open(p) for p in self.filepaths_cspec ]
+            )
         
         print("Loading response matrices...")
-        # Load response matrices
-        self.rsp_n3 = GbmRsp2.open(self.filepaths_rsp[0])
-        self.rsp_n6 = GbmRsp2.open(self.filepaths_rsp[1])
-        self.rsp_n7 = GbmRsp2.open(self.filepaths_rsp[2])
-        self.rsp_b0 = GbmRsp2.open(self.filepaths_rsp[3])
-        
-        self.rsps = GbmDetectorCollection.from_list([
-            self.rsp_n3, self.rsp_n6, self.rsp_n7, self.rsp_b0
-        ])
+        self.rsps = GbmDetectorCollection.from_list(
+            [ GbmRsp2.open(p) for p in self.filepaths_rsp ]
+        )
         
         print("Data loading complete!")
         
@@ -163,7 +152,8 @@ class GRBSpectralAnalysis:
         max_beta = kwargs.get('max_beta', self.max_beta)
         
         # Initialize spectral fitter
-        self.specfitter = SpectralFitterPgstat(
+        fitter_class = SpectralFitterPgstat if '--use-pgstat' in sys.argv else SpectralFitterCstat
+        self.specfitter = fitter_class(
             self.phas, self.bkgds.to_list(), self.rsps_interp, method='TNC'
         )
         
@@ -326,7 +316,7 @@ class GRBSpectralAnalysis:
                     'time_end': t_end,
                     'time_center': time_center,
                     'duration': t_end - t_start,
-                    # 'total_counts': 0, ### fix: total_counts,
+                    'total_counts': np.nan, ### fix: total_counts,
                     'amplitude': parameters[0] if len(parameters) > 0 else np.nan,
                     'amplitude_err_low': errors[0][0] if len(errors) > 0 and len(errors[0]) > 0 else np.nan,
                     'amplitude_err_high': errors[0][1] if len(errors) > 0 and len(errors[0]) > 1 else np.nan,
@@ -339,9 +329,9 @@ class GRBSpectralAnalysis:
                     'beta': parameters[3] if len(parameters) > 3 else np.nan,
                     'beta_err_low': errors[3][0] if len(errors) > 3 and len(errors[3]) > 0 else np.nan,
                     'beta_err_high': errors[3][1] if len(errors) > 3 and len(errors[3]) > 1 else np.nan,
-                    'pgstat': statistic,
+                    'stat': statistic,
                     'dof': dof,
-                    'reduced_pgstat': statistic / dof if dof > 0 else np.nan,
+                    'reduced_stat': statistic / dof if dof > 0 else np.nan,
                     'fit_message': specfitter.message,
                     'successful_fit': True
                 }
@@ -355,7 +345,7 @@ class GRBSpectralAnalysis:
                 print(f"  Epeak: {result['epeak']:.1f} keV")
                 print(f"  Alpha: {result['alpha']:.2f}")
                 print(f"  Beta: {result['beta']:.2f}")
-                print(f"  PGSTAT/DOF: {result['pgstat']:.1f}/{result['dof']}")
+                print(f"  STAT/DOF: {result['stat']:.1f}/{result['dof']}")
                 
             except Exception as e:
                 print(f"✗ Fit failed: {e}")
@@ -367,7 +357,7 @@ class GRBSpectralAnalysis:
                     'time_end': t_end,
                     'time_center': (t_start + t_end) / 2,
                     'duration': duration,
-                    # 'total_counts': np.nan,
+                    'total_counts': np.nan,
                     'amplitude': np.nan,
                     'amplitude_err_low': np.nan,
                     'amplitude_err_high': np.nan,
@@ -380,9 +370,9 @@ class GRBSpectralAnalysis:
                     'beta': np.nan,
                     'beta_err_low': np.nan,
                     'beta_err_high': np.nan,
-                    'pgstat': np.nan,
+                    'stat': np.nan,
                     'dof': np.nan,
-                    'reduced_pgstat': np.nan,
+                    'reduced_stat': np.nan,
                     'fit_message': str(e),
                     'successful_fit': False
                 }
@@ -418,12 +408,12 @@ class GRBSpectralAnalysis:
 
         # Define CSV headers
         headers = [
-            'time_start', 'time_end', 'time_center', 'duration', #'total_counts',
+            'time_start', 'time_end', 'time_center', 'duration', 'total_counts',
             'amplitude', 'amplitude_err_low', 'amplitude_err_high',
             'epeak', 'epeak_err_low', 'epeak_err_high',
             'alpha', 'alpha_err_low', 'alpha_err_high',
             'beta', 'beta_err_low', 'beta_err_high',
-            'pgstat', 'dof', 'reduced_pgstat', 'fit_message', 'successful_fit'
+            'stat', 'dof', 'reduced_stat', 'fit_message', 'successful_fit'
         ]
         
         try:
@@ -481,11 +471,14 @@ def get_arg(arg_name:str, default:str=None)->str:
 def main():
     """Main function to run analysis"""
     
+    bin_size = float(get_arg( "bin-size", "0.25"))
+    
     # Create analysis instance
     grb_analysis = GRBSpectralAnalysis(
 
             '090926181'      ### object name
-            , min_bin_size=0.5 ### initial value for adaptive bin size
+            , min_bin_size=bin_size ### initial value for adaptive bin size
+            , bkg_fit_degree=2
         
         )
     
