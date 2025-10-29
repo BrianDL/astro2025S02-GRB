@@ -86,6 +86,7 @@ class GRBSpectralAnalysis:
         self.min_bin_size = kwargs.get('min_bin_size', 2)
         self.bkg_fit_degree = kwargs.get('bkg_fit_degree', 2)
         self.bin_size_adaptive = kwargs.get('bin_size_adaptive', True)
+        self.stat = kwargs.get('stat', 'cstat')
         
         # Analysis parameters
         self.bkgd_range = [(-50, -10), (30, 100)]  # Background intervals
@@ -164,7 +165,7 @@ class GRBSpectralAnalysis:
         )
         
         
-    def fit_multiple_time_ranges(self, start_time=1, end_time=20, **kwargs):
+    def run_time_evolution_analysis(self, start_time=1, end_time=20, **kwargs):
         """Iterate over multiple time ranges and fit spectra for each"""
 
         assert 0 < start_time < end_time, "Invalid time range"
@@ -236,9 +237,9 @@ class GRBSpectralAnalysis:
             ]
             
             # Initialize spectral fitter
-            stat = get_arg('stat', 'cstat')
+            print(f'USING_STAT: {self.stat}')
             specfitter_funct = SpectralFitterPgstat \
-                if stat=='pgstat' else SpectralFitterCstat
+                if self.stat=='pgstat' else SpectralFitterCstat
 
             specfitter = specfitter_funct(
                 phas, self.bkgds.to_list(), rsps_interp, method='TNC'
@@ -335,12 +336,6 @@ class GRBSpectralAnalysis:
             
         except Exception as e:
             print(f"✗ Error saving CSV: {e}")
-            
-    def run_time_evolution_analysis(self, start_time=1, end_time=20, **kwargs):
-        """Run time evolution analysis across multiple time ranges"""
-        duration = kwargs.get('duration', self.min_bin_size)
-        return self.fit_multiple_time_ranges(start_time, end_time, duration=duration)
-
 
 def get_arg(arg_name:str, default:str=None)->str:
     try:
@@ -353,6 +348,7 @@ def get_arg(arg_name:str, default:str=None)->str:
 def main():
     """Main function to run analysis"""
     
+    stat = get_arg('stat', 'cstat')
     bin_size = float(get_arg( "bin-size", "0.25"))
     
     # Create analysis instance
@@ -361,6 +357,7 @@ def main():
             '090926181'      ### object name
             , min_bin_size=bin_size ### initial value for adaptive bin size
             , bkg_fit_degree=2
+            , stat=stat
         
         )
     
