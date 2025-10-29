@@ -194,11 +194,17 @@ class GRBSpectralAnalysis:
         # Initialize and fit Band function
         fit_function = Band() if '--use-band' in sys.argv \
             else Comptonized() + BlackBody() + PowerLaw()
+            
+            
+        for i, (name, _, desc) in enumerate(fit_function.param_list):
+            if 'beta' not in name.lower(): continue
         
-        fit_function.max_values[3] = max_beta
-        fit_function.min_values[3] = -100.0
+            fit_function.max_values[i] = max_beta
+            fit_function.min_values[i] = -100.0
         
         print('PARAMETERS:', fit_function.param_list)
+        print('MAX VALUES:', fit_function.max_values)
+        print('MIN VALUES:', fit_function.min_values)
         
         # Iterate over time ranges
         t_start:float = start_time
