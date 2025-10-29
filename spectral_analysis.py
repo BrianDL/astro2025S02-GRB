@@ -100,7 +100,7 @@ class GRBSpectralAnalysis:
             self.backfitters, dets=self.cspecs.detector()
         )
         
-        # Perform 0th order polynomial fit
+        # Perform nth order polynomial fit
         self.backfitters.fit(order=self.bkg_fit_degree)
         
         # Calculate chi-squared for quality assessment
@@ -116,71 +116,6 @@ class GRBSpectralAnalysis:
             self.bkgds, dets=self.cspecs.detector()
         )
         
-    def extract_spectra(self):
-        """Extract source and background spectra"""
-        print("Extracting spectra...")
-        
-        # Extract count spectra
-        self.data_specs = self.cspecs.to_spectrum(time_range=self.src_range)
-        
-        # Extract time-integrated background
-        self.bkgd_specs = self.bkgds.integrate_time(*self.src_range)
-        
-        # Apply energy selection
-        self.src_specs = self.cspecs.to_spectrum(
-            time_range=self.src_range, 
-            nai_kwargs={'energy_range': self.energy_range_nai}, 
-            bgo_kwargs={'energy_range': self.energy_range_bgo}
-        )
-        
-        # Convert to PHA format
-        self.phas = self.cspecs.to_pha(
-            time_ranges=self.src_range, 
-            nai_kwargs={'energy_range': self.energy_range_nai}, 
-            bgo_kwargs={'energy_range': self.energy_range_bgo}
-        )
-        
-        # Interpolate response matrices at spectrum central time
-        self.rsps_interp = [
-            rsp.interpolate(pha.tcent) for rsp, pha in zip(self.rsps, self.phas)
-        ]
-        
-    def fit_spectrum(self, **kwargs):
-        """Perform spectral fitting with the selected function"""
-        print("Performing spectral fitting...")
-
-        max_beta = kwargs.get('max_beta', self.max_beta)
-        
-        # Initialize spectral fitter
-        fitter_class = SpectralFitterPgstat if '--use-pgstat' in sys.argv else SpectralFitterCstat
-        self.specfitter = fitter_class(
-            self.phas, self.bkgds.to_list(), self.rsps_interp, method='TNC'
-        )
-        
-        # Initialize function
-        self.fit_function = Band() if '--use-band' in sys.argv \
-            else Comptonized() + BlackBody() + PowerLaw()
-        
-        self.fit_function.max_values[3] = max_beta
-
-        # Print Band function parameters
-        print("Band function parameters:")
-        print(f"Parameter list: {self.fit_function.param_list}")
-        print(f"Default values: {self.fit_function.default_values}")
-        print(f"Min values: {self.fit_function.min_values}")
-        print(f"Max values: {self.fit_function.max_values}")
-        
-        # Perform fit
-        print("Fitting Band function...")
-        self.specfitter.fit(self.fit_function, options={'maxiter': 1000})
-        
-        # Display results
-        print(f"Fit message: {self.specfitter.message}")
-        print(f"Parameters: {self.specfitter.parameters}")
-        print(f"90% Asymmetric Errors: {self.specfitter.asymmetric_errors(cl=0.9)}")
-        print(f"PGSTAT/DOF: {self.specfitter.statistic}/{self.specfitter.dof}")
-        
-        return self.specfitter.parameters, self.specfitter.asymmetric_errors(cl=0.9)
         
     def fit_multiple_time_ranges(self, start_time=1, end_time=20, **kwargs):
         """Iterate over multiple time ranges and fit spectra for each"""
@@ -209,8 +144,6 @@ class GRBSpectralAnalysis:
             self.fit_background()
         
         # Iterate over time ranges
-        # for i in range(start_time, end_time + 1, duration):
-        
         t_start:float = start_time
         t_end:float = start_time
 
@@ -227,11 +160,11 @@ class GRBSpectralAnalysis:
             bkgd_specs = self.bkgds.integrate_time(*current_range)
             
             # Apply energy selection
-            src_specs = self.cspecs.to_spectrum(
-                time_range=current_range, 
-                nai_kwargs={'energy_range': self.energy_range_nai}, 
-                bgo_kwargs={'energy_range': self.energy_range_bgo}
-            )
+            # src_specs = self.cspecs.to_spectrum(
+            #     time_range=current_range, 
+            #     nai_kwargs={'energy_range': self.energy_range_nai}, 
+            #     bgo_kwargs={'energy_range': self.energy_range_bgo}
+            # )
             
             # Convert to PHA format
             phas = self.cspecs.to_pha(
@@ -252,11 +185,13 @@ class GRBSpectralAnalysis:
             )
             
             # Initialize and fit Band function
-            band = Band()
-            band.max_values[3] = max_beta
+            fit_function = Band() if '--use-band' in sys.argv \
+                else Comptonized() + BlackBody() + PowerLaw()
+            
+            fit_function.max_values[3] = max_beta
                 
             try:
-                specfitter.fit(band, options={'maxiter': 1000})
+                specfitter.fit(fit_function, options={'maxiter': 2000})
                 
                 # Get results
                 parameters = specfitter.parameters
