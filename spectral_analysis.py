@@ -190,6 +190,15 @@ class GRBSpectralAnalysis:
             print("Fitting background first...")
             self.fit_background()
         
+        # Initialize and fit Band function
+        fit_function = Band() if '--use-band' in sys.argv \
+            else Comptonized() + BlackBody() + PowerLaw()
+        
+        fit_function.max_values[3] = max_beta
+        fit_function.min_values[3] = -100.0
+        
+        print('PARAMETERS:', fit_function.param_list)
+        
         # Iterate over time ranges
         t_start:float = start_time
         t_end:float = start_time
@@ -234,110 +243,59 @@ class GRBSpectralAnalysis:
             specfitter = specfitter_funct(
                 phas, self.bkgds.to_list(), rsps_interp, method='TNC'
             )
+                
+            specfitter.fit(fit_function, options={'maxiter': 2000})
             
-            # Initialize and fit Band function
-            fit_function = Band() if '--use-band' in sys.argv \
-                else Comptonized() + BlackBody() + PowerLaw()
+            # Get results
+            parameters = specfitter.parameters
+            errors = specfitter.asymmetric_errors(cl=0.9)
+            statistic = specfitter.statistic
+            dof = specfitter.dof
             
-            fit_function.max_values[3] = max_beta
+            epeak_err = errors[1][1]
+            for i, (name, _, desc) in enumerate(fit_function.param_list):
+                is_epeak = 'SED PEAK' in desc.upper()
+                if not is_epeak: continue
                 
-            try:
-                specfitter.fit(fit_function, options={'maxiter': 2000})
-                
-                # Get results
-                parameters = specfitter.parameters
-                errors = specfitter.asymmetric_errors(cl=0.9)
-                statistic = specfitter.statistic
-                dof = specfitter.dof
-                
-                # Calculate derived parameter Epeak if not directly fitted
-                if len(parameters) >= 2:
-                    epeak = parameters[1]
-                else:
-                    epeak = np.nan
-                
-                if len(errors) > 1 and len(errors[1]) > 1:
-                    epeak_err = errors[1][1]
+                epeak_err = errors[i][1]
 
-                if epeak_err == np.inf:
-                    print("ERRROR_HIGH:", epeak_err)
-                    if t_end >= end_time:
-                        raise ValueError("Fit Not Found in the rest of the interval")
+            fit_success = epeak_err < np.inf
 
-                    continue
-
-                # Store results
-                result = {
-                    'time_start': t_start,
-                    'time_end': t_end,
-                    'time_center': time_center,
-                    'duration': t_end - t_start,
-                    'total_counts': 0, ### fix: total_counts,
-                    'amplitude': parameters[0] if len(parameters) > 0 else np.nan,
-                    'amplitude_err_low': errors[0][0] if len(errors) > 0 and len(errors[0]) > 0 else np.nan,
-                    'amplitude_err_high': errors[0][1] if len(errors) > 0 and len(errors[0]) > 1 else np.nan,
-                    'epeak': epeak,
-                    'epeak_err_low': errors[1][0] if len(errors) > 1 and len(errors[1]) > 0 else np.nan,
-                    'epeak_err_high': errors[1][1] if len(errors) > 1 and len(errors[1]) > 1 else np.nan,
-                    'alpha': parameters[2] if len(parameters) > 2 else np.nan,
-                    'alpha_err_low': errors[2][0] if len(errors) > 2 and len(errors[2]) > 0 else np.nan,
-                    'alpha_err_high': errors[2][1] if len(errors) > 2 and len(errors[2]) > 1 else np.nan,
-                    'beta': parameters[3] if len(parameters) > 3 else np.nan,
-                    'beta_err_low': errors[3][0] if len(errors) > 3 and len(errors[3]) > 0 else np.nan,
-                    'beta_err_high': errors[3][1] if len(errors) > 3 and len(errors[3]) > 1 else np.nan,
-                    'stat': statistic,
-                    'dof': dof,
-                    'reduced_stat': statistic / dof if dof > 0 else np.nan,
-                    'fit_message': specfitter.message,
-                    'successful_fit': True
-                }
+            # Store results
+            result = {
+                'time_start': t_start,
+                'time_end': t_end,
+                'time_center': time_center,
+                'duration': t_end - t_start,
+                'stat': statistic if fit_success else np.nan,
+                'dof': dof if fit_success else np.nan,
+                'reduced_stat': statistic / dof if dof > 0 else np.nan,
+                'fit_message': specfitter.message,
+                'successful_fit': fit_success
+            }
                 
+            for (name, _, _), value, (low, high) in \
+                zip(fit_function.param_list, parameters, errors):
+                
+                result[f'{name}'] = value
+                result[f'{name}_err_low'] = low
+                result[f'{name}_err_high'] = high
+            
+            if fit_success:
+                print(f"✓ Fit successful!")
                 results.append(result)
                 successful_fits += 1
-                
-                # Print results for this time range
-                print(f"✓ Fit successful!")
-                print(f"  Amplitude: {result['amplitude']:.3e}")
-                print(f"  Epeak: {result['epeak']:.1f} keV")
-                print(f"  Alpha: {result['alpha']:.2f}")
-                print(f"  Beta: {result['beta']:.2f}")
-                print(f"  STAT/DOF: {result['stat']:.1f}/{result['dof']}")
-                
-            except Exception as e:
-                print(f"✗ Fit failed: {e}")
+            else:
+                print(f"✗ Fit failed...")
+                if t_end < end_time: continue
+
                 failed_fits += 1
-                
-                # Store failed result
-                result = {
-                    'time_start': t_start,
-                    'time_end': t_end,
-                    'time_center': (t_start + t_end) / 2,
-                    'duration': duration,
-                    'total_counts': np.nan,
-                    'amplitude': np.nan,
-                    'amplitude_err_low': np.nan,
-                    'amplitude_err_high': np.nan,
-                    'epeak': np.nan,
-                    'epeak_err_low': np.nan,
-                    'epeak_err_high': np.nan,
-                    'alpha': np.nan,
-                    'alpha_err_low': np.nan,
-                    'alpha_err_high': np.nan,
-                    'beta': np.nan,
-                    'beta_err_low': np.nan,
-                    'beta_err_high': np.nan,
-                    'stat': np.nan,
-                    'dof': np.nan,
-                    'reduced_stat': np.nan,
-                    'fit_message': str(e),
-                    'successful_fit': False
-                }
                 
                 if '--include-errors' in sys.argv:
                     results.append(result)
-
+            
             t_start = t_end
-        
+            
         # Save results to CSV
         self.save_results_to_csv(results, start_time, end_time, duration)
         
@@ -363,14 +321,7 @@ class GRBSpectralAnalysis:
         filename = get_arg('out', filename)
 
         # Define CSV headers
-        headers = [
-            'time_start', 'time_end', 'time_center', 'duration', 'total_counts',
-            'amplitude', 'amplitude_err_low', 'amplitude_err_high',
-            'epeak', 'epeak_err_low', 'epeak_err_high',
-            'alpha', 'alpha_err_low', 'alpha_err_high',
-            'beta', 'beta_err_low', 'beta_err_high',
-            'stat', 'dof', 'reduced_stat', 'fit_message', 'successful_fit'
-        ]
+        headers = results[0].keys()
         
         try:
             with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
