@@ -182,37 +182,6 @@ class GRBSpectralAnalysis:
         
         return self.specfitter.parameters, self.specfitter.asymmetric_errors(cl=0.9)
         
-    def plot_spectrum_fit(self):
-        """Plot the fitted spectrum with residuals"""
-        print("Plotting spectrum fit...")
-        
-        # Initialize model plot
-        modelplot = ModelFit(fitter=self.specfitter)
-        
-        # Set axis limits
-        ModelFit.hide_residuals(modelplot)
-        plt.ylim(1e-4, 200)
-        plt.xlim(7.15, 4000)
-        ModelFit.show_residuals(modelplot)
-        
-        # Save plot
-        os.makedirs('imagenes', exist_ok=True)
-        plt.savefig('imagenes/spectrum_fit.png', bbox_inches='tight')
-        plt.show()
-        
-    def plot_spectra_with_background(self):
-        """Plot spectra with background fits and source selections"""
-        print("Plotting spectra with background...")
-        
-        # Plot spectra with background
-        specplots = [
-            Spectrum(data=data_spec, background=bkgd_spec) 
-            for data_spec, bkgd_spec in zip(self.data_specs, self.bkgd_specs)
-        ]
-        
-        for specplot, src_spec in zip(specplots, self.src_specs):
-            specplot.add_selection(src_spec)
-            
     def fit_multiple_time_ranges(self, start_time=1, end_time=20, **kwargs):
         """Iterate over multiple time ranges and fit spectra for each"""
 
@@ -430,31 +399,6 @@ class GRBSpectralAnalysis:
         except Exception as e:
             print(f"✗ Error saving CSV: {e}")
             
-    def run_full_analysis(self):
-        """Run complete spectral analysis pipeline"""
-        print("="*60)
-        print("Starting GRB Spectral Analysis")
-        print("="*60)
-        
-        # Fit background
-        self.fit_background()
-        
-        # Extract spectra
-        self.extract_spectra()
-        
-        # Fit spectrum
-        parameters, errors = self.fit_spectrum()
-        
-        # Plot results
-        # self.plot_spectrum_fit()
-        # self.plot_spectra_with_background()
-        
-        print("="*60)
-        print("Analysis Complete!")
-        print("="*60)
-        
-        return parameters, errors
-        
     def run_time_evolution_analysis(self, start_time=1, end_time=20, **kwargs):
         """Run time evolution analysis across multiple time ranges"""
         duration = kwargs.get('duration', self.min_bin_size)
