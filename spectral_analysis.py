@@ -90,7 +90,7 @@ class GRBSpectralAnalysis:
         
         # Analysis parameters
         self.bkgd_range = [(-50, -10), (30, 100)]  # Background intervals
-        self.energy_range_nai = (8, 300)  # NaI energy range (keV)
+        self.energy_range_nai = (8, 900)  # NaI energy range (keV)
         self.energy_range_bgo = (325, 9500)  # BGO energy range (keV)
 
         self.object_no = object_no
@@ -176,6 +176,7 @@ class GRBSpectralAnalysis:
         print("="*60)
         print("MULTIPLE TIME RANGE SPECTRAL ANALYSIS")
         print("="*60)
+        print(f'USING_STAT: {self.stat}')
         print(f"Analyzing time ranges from {start_time} to {end_time} seconds")
         print(f"Duration per range: {duration} seconds")
         print(f"Total ranges: {end_time - start_time + 1}")
@@ -197,10 +198,17 @@ class GRBSpectralAnalysis:
             
             
         for i, (name, _, desc) in enumerate(fit_function.param_list):
-            if 'beta' not in name.lower(): continue
-        
-            fit_function.max_values[i] = max_beta
-            fit_function.min_values[i] = -100.0
+            if '--use-band' in sys.argv and 'beta' in name.lower():
+                fit_function.max_values[i] = max_beta
+                fit_function.min_values[i] = -40.0
+                break
+
+            if 'blackbody' in name.lower() \
+                and 'kt' in name.lower():
+                
+                fit_function.max_values[i] = 30
+                fit_function.min_values[i] = 1E-30
+
         
         print('PARAMETERS:', fit_function.param_list)
         print('MAX VALUES:', fit_function.max_values)
@@ -243,7 +251,6 @@ class GRBSpectralAnalysis:
             ]
             
             # Initialize spectral fitter
-            print(f'USING_STAT: {self.stat}')
             specfitter_funct = SpectralFitterPgstat \
                 if self.stat=='pgstat' else SpectralFitterCstat
 
