@@ -172,7 +172,7 @@ class GRBSpectralAnalysis:
         self.bkgds = GbmDetectorCollection.from_list(
             self.bkgds, dets=self.cspecs.detector()
         )
-        
+
         
     def run_time_evolution_analysis(self, start_time: float = 1, end_time: float = 20, **kwargs: Any) -> List[Dict[str, Any]]:
         """Iterate over multiple time ranges and fit spectra for each"""
@@ -205,23 +205,33 @@ class GRBSpectralAnalysis:
         fit_function = Band() if '--use-band' in sys.argv \
             else Comptonized() + BlackBody() + PowerLaw()
             
-            
         for i, (name, _, desc) in enumerate(fit_function.param_list):
-            if '--use-band' in sys.argv and 'beta' in name.lower():
-                fit_function.max_values[i] = max_beta
-                fit_function.min_values[i] = -40.0
-                break
-
-            if 'blackbody' in name.lower() \
-                and 'kt' in name.lower():
+            if '--use-band' in sys.argv:
+                if 'beta' in name.lower():
+                    fit_function.max_values[i] = max_beta
+                    fit_function.min_values[i] = -40.0
+                    break
                 
-                fit_function.max_values[i] = 30
-                fit_function.min_values[i] = 1E-30
+                continue
 
-        
-        print('PARAMETERS:', fit_function.param_list)
-        print('MAX VALUES:', fit_function.max_values)
-        print('MIN VALUES:', fit_function.min_values)
+            if desc=='Temperature':
+                fit_function.max_values[i] = 50
+                fit_function.min_values[i] = 1E-80
+                
+            elif desc == 'Amplitude':
+                fit_function.min_values[i] = -1.0
+
+            elif desc == 'Photon index':
+                fit_function.max_values[i] = 30
+                fit_function.min_values[i] = -2.5
+
+        print('VALORES_DE_PARAMETROS:')
+        for idx, (par,min,max) in enumerate(zip(
+            fit_function.param_list,
+            fit_function.min_values,
+            fit_function.max_values
+        )):
+            print(idx,par,min,max)
         
         # Iterate over time ranges
         t_start:float = start_time
@@ -267,7 +277,7 @@ class GRBSpectralAnalysis:
                 phas, self.bkgds.to_list(), rsps_interp, method='TNC'
             )
                 
-            specfitter.fit(fit_function, options={'maxiter': 2000})
+            specfitter.fit(fit_function, options={'maxiter': 10000})
             
             # Get results
             parameters = specfitter.parameters
