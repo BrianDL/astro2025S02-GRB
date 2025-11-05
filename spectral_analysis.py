@@ -10,7 +10,10 @@ including:
 
 Script options (all are supplied as ``--option value`` on the command line):
 
-TODO: add the --obj option to this docs
+--obj <object_identifier>
+    GRB object identifier to analyze. Supported identifiers are ``090926181`` and 
+    ``090424592``. This determines which detector data and response files are loaded.
+    Default is ``090926181``.
 
 --out <filename>
     Name of the CSV file that will receive the fitting results.
@@ -63,9 +66,12 @@ write the results to *my_results.csv*.
 
 import os
 import sys
+import csv
 import numpy as np
 import matplotlib.pyplot as plt
-import csv
+
+from typing import List, Dict, Any, Optional, Union, Tuple
+
 from gdt.core import data_path
 from gdt.missions.fermi.gbm.phaii import GbmPhaii
 from gdt.missions.fermi.gbm.collection import GbmDetectorCollection
@@ -81,38 +87,36 @@ from gdt.core.spectra.functions import Band, Comptonized, BlackBody, PowerLaw
 class GRBSpectralAnalysis:
     """Class for GRB spectral analysis using Fermi-GBM data"""
     
-    ### TODO: This class needs a method that will plot the ligthcurve of the object and
-    ### the time evolution of the parameters in a single plot with shared time axis 
-    ### see example in the analisis_espectral_multiple.ipynb notebook
-
-    def __init__(self, object_no='090926181', **kwargs):
+    def __init__(self, object_no: str = '090926181', **kwargs: Any) -> None:
         """Initialize analysis with GRB identifier"""
 
-        self.max_beta = kwargs.get('max_beta', -0.2)
-        self.min_bin_size = kwargs.get('min_bin_size', 2)
-        self.bkg_fit_degree = kwargs.get('bkg_fit_degree', 2)
-        self.bin_size_adaptive = kwargs.get('bin_size_adaptive', True)
-        self.stat = kwargs.get('stat', 'cstat')
+        self.max_beta: float = kwargs.get('max_beta', -0.2)
+        self.min_bin_size: float = kwargs.get('min_bin_size', 2)
+        self.bkg_fit_degree: int = kwargs.get('bkg_fit_degree', 2)
+        self.bin_size_adaptive: bool = kwargs.get('bin_size_adaptive', True)
+        self.stat: str = kwargs.get('stat', 'cstat')
         
         # Analysis parameters
-        self.bkgd_range = [(-50, -10), (30, 100)]  # Background intervals
-        self.energy_range_nai = (8, 900)  # NaI energy range (keV)
-        self.energy_range_bgo = (325, 9500)  # BGO energy range (keV)
+        self.bkgd_range: List[Tuple[float, float]] = [(-50, -10), (30, 100)]  # Background intervals
+        self.energy_range_nai: Tuple[float, float] = (8, 900)  # NaI energy range (keV)
+        self.energy_range_bgo: Tuple[float, float] = (325, 9500)  # BGO energy range (keV)
 
-        self.object_no = object_no
-        self.object_name = f'bn{object_no}'
+        self.object_no: str = object_no
+        self.object_name: str = f'bn{object_no}'
+        self.filepaths_cspec: List[str] = []
+        self.filepaths_rsp: List[str] = []
         self.setup_paths()
         self.load_data()
         
-    def setup_paths(self):
+    def setup_paths(self) -> None:
         """Setup file paths for CSPEC and response data"""
         # CSPEC file paths
         common_str = f'datos/{self.object_no}/glg_cspec_'
         nai_detectors = None 
 
-        if object_no=='090926181':
+        if self.object_no=='090926181':
             nai_detectors = (3,6,7)
-        elif object_no=='090424592':
+        elif self.object_no=='090424592':
             nai_detectors = (7,8,11)
 
         assert nai_detectors, "No se han encotrado datos del objeto..."
@@ -133,7 +137,7 @@ class GRBSpectralAnalysis:
             self.filepaths_rsp.append(f"{common_str}b0_{self.object_name}_v00.rsp2")
         
 
-    def load_data(self):
+    def load_data(self) -> None:
         """Load CSPEC and response data"""
         print("Loading CSPEC data...")
         self.cspecs = GbmDetectorCollection.from_list(
@@ -147,7 +151,7 @@ class GRBSpectralAnalysis:
         
         print("Data loading complete!")
         
-    def fit_background(self):
+    def fit_background(self) -> None:
         """Fit background using polynomial models"""
         print("Fitting background...")
         
@@ -177,7 +181,7 @@ class GRBSpectralAnalysis:
         )
         
         
-    def run_time_evolution_analysis(self, start_time=1, end_time=20, **kwargs):
+    def run_time_evolution_analysis(self, start_time: float = 1, end_time: float = 20, **kwargs: Any) -> List[Dict[str, Any]]:
         """Iterate over multiple time ranges and fit spectra for each"""
 
         assert 0 < start_time < end_time, "Invalid time range"
@@ -337,14 +341,14 @@ class GRBSpectralAnalysis:
         
         return results
         
-    def save_results_to_csv(self, results, start_time, end_time, duration):
+    def save_results_to_csv(self, results: List[Dict[str, Any]], start_time: float, end_time: float, duration: float) -> None:
         """Save spectral fitting results to CSV file"""
         print(f"Saving results to CSV file...")
         
         # Create filename
         filename = \
             f'spectral_evolution_{self.object_name}_{start_time}-{end_time}s_{duration}s_duration.csv'
-        filename = get_arg('out', filename)
+        filename = get_arg('out', filename) or filename
 
         # Define CSV headers
         headers = results[0].keys()
@@ -362,7 +366,7 @@ class GRBSpectralAnalysis:
         except Exception as e:
             print(f"✗ Error saving CSV: {e}")
 
-def get_arg(arg_name:str, default:str=None)->str:
+def get_arg(arg_name: str, default: Optional[str] = None) -> Optional[str]:
     try:
         idx = sys.argv.index(f"--{arg_name}")
         return sys.argv[idx+1]
@@ -370,13 +374,13 @@ def get_arg(arg_name:str, default:str=None)->str:
         return default
 
 
-def main():
+def main() -> List[Dict[str, Any]]:
     """Main function to run analysis"""
     
 
-    stat = get_arg('stat', 'cstat')
-    bin_size = float(get_arg( "bin-size", "0.25"))
-    obj_name = get_arg('obj', '090926181')
+    stat: str = get_arg('stat', 'cstat') or 'cstat'
+    bin_size: float = float(get_arg("bin-size", "0.25") or "0.25")
+    obj_name: str = get_arg('obj', '090926181') or '090926181'
     # Create analysis instance
     grb_analysis = GRBSpectralAnalysis(
 
