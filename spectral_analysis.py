@@ -115,27 +115,20 @@ class GRBSpectralAnalysis:
         nai_detectors = None 
 
         if self.object_no=='090926181':
-            nai_detectors = (3,6,7)
+            dets = ('n3','n6','n7','b0')
         elif self.object_no=='090424592':
-            nai_detectors = (7,8,11)
+            dets = ('n7','n8','nb','b1')
 
-        assert nai_detectors, "No se han encotrado datos del objeto..."
-        
-        self.filepaths_cspec = [
-            f"{common_str}n{n}_{self.object_name}_v00.pha" for n in nai_detectors 
+        assert dets, "No se han encotrado datos del objeto..."
+        all_paths = [
+            [ f"{common_str}{dt}_{self.object_name}_v00.{ext}" for dt in dets] \
+            for ext in ('pha', 'rsp2')
         ]
-        
-        if '--ignore-bgo' not in sys.argv:  # Only include BGO if not ignoring
-            self.filepaths_cspec.append(f"{common_str}b0_{self.object_name}_v00.pha")
-        
-        # Response file paths
-        self.filepaths_rsp = [
-            f"{common_str}n{n}_{self.object_name}_v00.rsp2" for n in nai_detectors 
-        ]
-        
-        if '--ignore-bgo' not in sys.argv:
-            self.filepaths_rsp.append(f"{common_str}b0_{self.object_name}_v00.rsp2")
-        
+
+        self.filepaths_cspec, self.filepaths_rsp = all_paths
+        if '--ignore-bgo' in sys.argv:
+            self.filepaths_cspec.pop(-1)
+            self.filepaths_rsp.pop(-1)
 
     def load_data(self) -> None:
         """Load CSPEC and response data"""
@@ -350,21 +343,20 @@ class GRBSpectralAnalysis:
             f'spectral_evolution_{self.object_name}_{start_time}-{end_time}s_{duration}s_duration.csv'
         filename = get_arg('out', filename) or filename
 
+        self.csv_file = filename ### storing filename for plotting 
+
         # Define CSV headers
         headers = results[0].keys()
         
-        try:
-            with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=headers)
-                writer.writeheader()
-                
-                for result in results:
-                    writer.writerow(result)
+        with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=headers)
+            writer.writeheader()
             
-            print(f"✓ Results saved to: {filename}")
+            for result in results:
+                writer.writerow(result)
+        
+        print(f"✓ Results saved to: {filename}")
             
-        except Exception as e:
-            print(f"✗ Error saving CSV: {e}")
 
 def get_arg(arg_name: str, default: Optional[str] = None) -> Optional[str]:
     try:
