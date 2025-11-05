@@ -10,6 +10,8 @@ including:
 
 Script options (all are supplied as ``--option value`` on the command line):
 
+TODO: add the --obj option to this docs
+
 --out <filename>
     Name of the CSV file that will receive the fitting results.
     If omitted the script builds a default name of the form:
@@ -79,6 +81,10 @@ from gdt.core.spectra.functions import Band, Comptonized, BlackBody, PowerLaw
 class GRBSpectralAnalysis:
     """Class for GRB spectral analysis using Fermi-GBM data"""
     
+    ### TODO: This class needs a method that will plot the ligthcurve of the object and
+    ### the time evolution of the parameters in a single plot with shared time axis 
+    ### see example in the analisis_espectral_multiple.ipynb notebook
+
     def __init__(self, object_no='090926181', **kwargs):
         """Initialize analysis with GRB identifier"""
 
@@ -102,10 +108,17 @@ class GRBSpectralAnalysis:
         """Setup file paths for CSPEC and response data"""
         # CSPEC file paths
         common_str = f'datos/{self.object_no}/glg_cspec_'
+        nai_detectors = None 
+
+        if object_no=='090926181':
+            nai_detectors = (3,6,7)
+        elif object_no=='090424592':
+            nai_detectors = (7,8,11)
+
+        assert nai_detectors, "No se han encotrado datos del objeto..."
+        
         self.filepaths_cspec = [
-            f"{common_str}n3_{self.object_name}_v00.pha",  # NaI detectors
-            f"{common_str}n6_{self.object_name}_v00.pha",
-            f"{common_str}n7_{self.object_name}_v00.pha"
+            f"{common_str}n{n}_{self.object_name}_v00.pha" for n in nai_detectors 
         ]
         
         if '--ignore-bgo' not in sys.argv:  # Only include BGO if not ignoring
@@ -113,14 +126,13 @@ class GRBSpectralAnalysis:
         
         # Response file paths
         self.filepaths_rsp = [
-            f"{common_str}n3_{self.object_name}_v00.rsp2",
-            f"{common_str}n6_{self.object_name}_v00.rsp2",
-            f"{common_str}n7_{self.object_name}_v00.rsp2"
+            f"{common_str}n{n}_{self.object_name}_v00.rsp2" for n in nai_detectors 
         ]
         
         if '--ignore-bgo' not in sys.argv:
             self.filepaths_rsp.append(f"{common_str}b0_{self.object_name}_v00.rsp2")
         
+
     def load_data(self):
         """Load CSPEC and response data"""
         print("Loading CSPEC data...")
@@ -361,13 +373,14 @@ def get_arg(arg_name:str, default:str=None)->str:
 def main():
     """Main function to run analysis"""
     
+
     stat = get_arg('stat', 'cstat')
     bin_size = float(get_arg( "bin-size", "0.25"))
-    
+    obj_name = get_arg('obj', '090926181')
     # Create analysis instance
     grb_analysis = GRBSpectralAnalysis(
 
-            '090926181'      ### object name
+            obj_name      ### object name
             , min_bin_size=bin_size ### initial value for adaptive bin size
             , bkg_fit_degree=2
             , stat=stat
