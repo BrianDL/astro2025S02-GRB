@@ -39,7 +39,7 @@ class GRBSpectralAnalysis:
         # Analysis parameters
         self.bkgd_range: list[tuple[float, float]] = [(-50, -10), (30, 100)]  # Background intervals
         self.energy_range_nai: tuple[float, float] = (8, 900)  # NaI energy range (keV)
-        self.energy_range_bgo: tuple[float, float] = (325, 9500)  # BGO energy range (keV)
+        self.energy_range_bgo: tuple[float, float] = (325, 35000)  # BGO energy range (keV)
 
         self.object_name: str = f'bn{obj}'
         self.filepaths_cspec: list[str] = []
@@ -53,9 +53,9 @@ class GRBSpectralAnalysis:
         common_str = f'datos/{self.obj}/glg_cspec_'
 
         if self.obj=='090926181':
-            dets = ('n3','n6','n7','b0')
+            dets = ('b0','n3','n6','n7')
         elif self.obj=='090424592':
-            dets = ('n7','n8','nb','b1')
+            dets = ('b1','n7','n8','nb')
 
         assert dets, "No se han encotrado datos del objeto..."
         all_paths = [
@@ -65,8 +65,8 @@ class GRBSpectralAnalysis:
 
         self.filepaths_cspec, self.filepaths_rsp = all_paths
         if self.ignore_bgo:
-            self.filepaths_cspec.pop(-1)
-            self.filepaths_rsp.pop(-1)
+            self.filepaths_cspec.pop(0)
+            self.filepaths_rsp.pop(0)
 
     def load_data(self) -> None:
         """Load CSPEC and response data"""
@@ -146,9 +146,8 @@ class GRBSpectralAnalysis:
         for i, (name, _, desc) in enumerate(fit_function.param_list):
             if self.fit_type=="band":
                 if 'beta' in name.lower():
-                    fit_function.max_values[i] = max_beta
-                    fit_function.min_values[i] = -80.0
-                    break
+                    fit_function.max_values[i] = -2.0
+                    fit_function.min_values[i] = -15.0
                 continue
 
             if desc=='Temperature':
@@ -182,11 +181,11 @@ class GRBSpectralAnalysis:
             current_range = (t_start, t_end)
             
             # Extract spectra for this time range ''
-            data_specs = self.cspecs.to_spectrum(time_range=current_range)
-            bkgd_specs = self.bkgds.integrate_time(*current_range)
+            _ = self.cspecs.to_spectrum(time_range=current_range)
+            _ = self.bkgds.integrate_time(*current_range)
 
             # Apply energy selection ''
-            src_specs = self.cspecs.to_spectrum(
+            _ = self.cspecs.to_spectrum(
                  time_range=current_range,
                  nai_kwargs={'energy_range': self.energy_range_nai},
                  bgo_kwargs={'energy_range': self.energy_range_bgo}
@@ -403,7 +402,7 @@ def main() -> list[dict[str, Any]]:
     # Create columns depending on what fit function it's in use.
     columns: list[str] = ['Comptonized: Epeak','BlackBody: kT','PowerLaw: A']
     if args.fit_func == "band":
-        columns = ['Epeak','alpha','beta']
+        columns = ['Epeak','alpha','beta', 'A']
     grb_analysis.graph(results, columns, show=args.show)
     
     return results
