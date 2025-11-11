@@ -144,30 +144,29 @@ class GRBSpectralAnalysis:
             else Comptonized() + BlackBody() + PowerLaw()
 
         for i, (name, _, desc) in enumerate(fit_function.param_list):
+            fit_function.free[i] = True ### configure all params as free
             if self.fit_type=="band":
                 if 'beta' in name.lower():
-                    fit_function.max_values[i] = -2.0
+                    fit_function.max_values[i] = -1.0
                     fit_function.min_values[i] = -15.0
                 continue
 
             if desc=='Temperature':
-                fit_function.max_values[i] = 50
-                fit_function.min_values[i] = 1E-80
-
-            elif desc == 'Amplitude':
-                fit_function.min_values[i] = -1.0
+                fit_function.max_values[i] = 200
+                fit_function.min_values[i] = 5
 
             elif desc == 'Photon index':
-                fit_function.max_values[i] = 30
+                fit_function.max_values[i] = 2
                 fit_function.min_values[i] = -2.5
 
         print('VALORES_DE_PARAMETROS:')
-        for idx, (par,min,max) in enumerate(zip(
+        for idx, (par,free,min,max) in enumerate(zip(
             fit_function.param_list,
+            fit_function.free,
             fit_function.min_values,
             fit_function.max_values
         )):
-            print(idx,par,min,max)
+            print(idx,par,free,min,max)
 
         # Iterate over time ranges
         t_start:float = start_time
@@ -217,12 +216,18 @@ class GRBSpectralAnalysis:
             errors = specfitter.asymmetric_errors(cl=0.9)
             statistic = specfitter.statistic
             dof = specfitter.dof
+
+            #print('ERRORS:', len(errors), errors)
+            #print('PARAMETERS:', len(parameters), parameters)
+            assert len(errors) == len(parameters) == len(fit_function.param_list), \
+                "Each parameter must report an error"
+
             epeak_err = errors[1][1]
             for i, (name, _, desc) in enumerate(fit_function.param_list):
                 is_epeak = 'SED PEAK' in desc.upper()
                 if not is_epeak: continue
                 epeak_err = errors[i][1]
-            fit_success = epeak_err < np.inf
+            fit_success = epeak_err < np.inf #and specfitter.success
 
             # Store results
             result = {
@@ -400,7 +405,7 @@ def main() -> list[dict[str, Any]]:
     print(f"Results saved to CSV file")
     
     # Create columns depending on what fit function it's in use.
-    columns: list[str] = ['Comptonized: Epeak','BlackBody: kT','PowerLaw: A']
+    columns: list[str] = ['Comptonized: Epeak','BlackBody: kT','PowerLaw: index']
     if args.fit_func == "band":
         columns = ['Epeak','alpha','beta', 'A']
     grb_analysis.graph(results, columns, show=args.show)
