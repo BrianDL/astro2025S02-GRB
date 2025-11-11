@@ -24,7 +24,7 @@ class GRBSpectralAnalysis:
 
     def __init__(
             self, obj: str, fit_type: Literal["band", "multi"],
-            ignore_bgo: bool, include_errors: bool,
+        ignore_bgo: bool, include_errors: bool, strict:bool,
             stat: str, out: str,
             max_beta: float = -0.2,
             min_bin_size: float = 2,
@@ -151,11 +151,11 @@ class GRBSpectralAnalysis:
                     fit_function.min_values[i] = -15.0
                 continue
 
-            if desc=='Temperature':
-                fit_function.max_values[i] = 200
+            if name=='BlackBody: kT':
+                fit_function.max_values[i] = 100
                 fit_function.min_values[i] = 5
 
-            elif desc == 'Photon index':
+            elif name== 'PowerLaw: index':
                 fit_function.max_values[i] = 2
                 fit_function.min_values[i] = -2.5
 
@@ -209,7 +209,7 @@ class GRBSpectralAnalysis:
             specfitter = specfitter_funct(
                 phas, self.bkgds.to_list(), rsps_interp, method='TNC'
             )
-            specfitter.fit(fit_function, options={'maxiter': 10000})
+            specfitter.fit(fit_function, options={'maxiter': 50000})
 
             # Get results
             parameters = specfitter.parameters
@@ -227,7 +227,8 @@ class GRBSpectralAnalysis:
                 is_epeak = 'SED PEAK' in desc.upper()
                 if not is_epeak: continue
                 epeak_err = errors[i][1]
-            fit_success = epeak_err < np.inf #and specfitter.success
+            fit_success = epeak_err < np.inf and \
+                (not self.strict or specfitter.success)
 
             # Store results
             result = {
@@ -375,6 +376,8 @@ to *my_results.csv*.""")
     error message; otherwise only successful fits are saved.""")
     parser.add_argument("--show", action="store_true",
         help="""Whether to show or not the graphs created.""")
+    parser.add_argument("--strict", action="store_true",
+                        help="""Use GBT bin acceptance criteria along with the energy criteria.""")
     args: Namespace = parser.parse_args()
     return args
 
@@ -394,8 +397,10 @@ def main() -> list[dict[str, Any]]:
             bkg_fit_degree=2,
             stat=args.stat,
             fit_type=args.fit_func,
+            strict=args.strict,
             ignore_bgo=args.ignore_bgo,
-            include_errors=args.include_errors)
+            include_errors=args.include_errors
+    )
     
     print("\nRunning time evolution analysis ({start_time}-{end_time}s)...")
     results = grb_analysis.run_time_evolution_analysis(start_time=start_time, end_time=end_time)
