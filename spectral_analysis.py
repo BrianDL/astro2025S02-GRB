@@ -147,7 +147,7 @@ class GRBSpectralAnalysis:
             if self.fit_type=="band":
                 if 'beta' in name.lower():
                     fit_function.max_values[i] = max_beta
-                    fit_function.min_values[i] = -40.0
+                    fit_function.min_values[i] = -80.0
                     break
                 continue
 
@@ -180,16 +180,17 @@ class GRBSpectralAnalysis:
 
             # Define current time range
             current_range = (t_start, t_end)
-            # Extract spectra for this time range
-            # data_specs = self.cspecs.to_spectrum(time_range=current_range)
-            # bkgd_specs = self.bkgds.integrate_time(*current_range)
+            
+            # Extract spectra for this time range ''
+            data_specs = self.cspecs.to_spectrum(time_range=current_range)
+            bkgd_specs = self.bkgds.integrate_time(*current_range)
 
-            # Apply energy selection
-            # src_specs = self.cspecs.to_spectrum(
-            #     time_range=current_range,
-            #     nai_kwargs={'energy_range': self.energy_range_nai},
-            #     bgo_kwargs={'energy_range': self.energy_range_bgo}
-            # )
+            # Apply energy selection ''
+            src_specs = self.cspecs.to_spectrum(
+                 time_range=current_range,
+                 nai_kwargs={'energy_range': self.energy_range_nai},
+                 bgo_kwargs={'energy_range': self.energy_range_bgo}
+             )
 
             # Convert to PHA format
             phas = self.cspecs.to_pha(
@@ -279,20 +280,26 @@ class GRBSpectralAnalysis:
         # Create figure and axis
         cspec_obj=GbmPhaii.open(f'datos/{self.obj}/glg_cspec_b{int('592' in self.obj)}_bn{self.obj}_v00.pha')
         t_range = (0,18)
-        e_range = (325,9500)
+        e_range = self.energy_range_bgo
         lc_data = cspec_obj.to_lightcurve(time_range=t_range, energy_range=e_range)
-        _, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(10, 12), sharex=True, gridspec_kw={'hspace': 0})
-        _ = Lightcurve(data=lc_data, ax=ax1)
-        axes =(ax1, ax2, ax3, ax4)
-        colors = ('blue','orange','green', 'red' )
+        
+        _, axes = plt.subplots(
+                    len(columns) +1, 1
+                    , figsize=(10, 12)
+                    , sharex=True
+                    , gridspec_kw={'hspace': 0})
+
+        _ = Lightcurve(data=lc_data, ax=axes[0])
+        
+        #axes =(ax1, ax2, ax3, ax4)
+        colors = ('blue','green', 'red', 'orange' )
         scales = ('linear', 'linear', 'linear', 'linear')
-        for idx, (ax, param, color, scale) in enumerate(zip(axes, columns, colors, scales)):
-            if idx > 0:
-                ax.errorbar(df['time_center'], df[param],
-                    yerr=[df[f'{param}_err_low']
-                    , df[f'{param}_err_high']],
-                         fmt='.-', color=color, capsize=3, label=param)
-                ax.set_ylabel(param)
+        for idx, (ax, param, color, scale) in enumerate(zip(axes[1:], columns, colors, scales)):
+            ax.errorbar(df['time_center'], df[param],
+                yerr=[df[f'{param}_err_low']
+                , df[f'{param}_err_high']],
+                        fmt='.-', color=color, capsize=3, label=param)
+            ax.set_ylabel(param)
             ax.set_yscale(scale)
             ax.legend()
             ax.grid(True, alpha=0.3)
@@ -370,8 +377,9 @@ to *my_results.csv*.""")
 def main() -> list[dict[str, Any]]:
     """Main function to run analysis"""
 
-    start_time:int = 1
-    end_time:int = 17
+    start_time  :float = 0.01
+    end_time    :float = 17.00
+
     args: Namespace = get_cmd_args()
 
     # Create analysis instance.
@@ -393,9 +401,9 @@ def main() -> list[dict[str, Any]]:
     print(f"Results saved to CSV file")
     
     # Create columns depending on what fit function it's in use.
-    columns: list[str] = ['A','Comptonized: Epeak','BlackBody: kT','PowerLaw: A']
+    columns: list[str] = ['Comptonized: Epeak','BlackBody: kT','PowerLaw: A']
     if args.fit_func == "band":
-        columns = ['A','Epeak','alpha','beta']
+        columns = ['Epeak','alpha','beta']
     grb_analysis.graph(results, columns, show=args.show)
     
     return results
