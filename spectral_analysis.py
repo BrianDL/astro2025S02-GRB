@@ -112,7 +112,7 @@ class GRBSpectralAnalysis:
         )
 
 
-    def run_time_evolution_analysis(self, start_time: float = 1, end_time: float = 20, **kwargs: Any) -> list[dict[str, Any]]:
+    def run_time_evolution_analysis(self, start_time: float, end_time: float, **kwargs: Any) -> list[dict[str, Any]]:
         """Iterate over multiple time ranges and fit spectra for each"""
 
         assert 0 < start_time < end_time, "Invalid time range"
@@ -253,6 +253,7 @@ class GRBSpectralAnalysis:
                 failed_fits += 1
                 if self.include_errors:
                     results.append(result)
+
             t_start = t_end
 
         # Save results to CSV
@@ -268,6 +269,7 @@ class GRBSpectralAnalysis:
         print(f"Total ranges analyzed: {len(results)}")
         print(f"Results saved to CSV file")
         print("="*60)
+
         return results
 
     def graph(self, results: list[dict[str, Any]], columns: list[str], show: bool) -> None:
@@ -276,7 +278,7 @@ class GRBSpectralAnalysis:
         df: pd.DataFrame = pd.DataFrame(results)
         # Create figure and axis
         cspec_obj=GbmPhaii.open(f'datos/{self.obj}/glg_cspec_b{int('592' in self.obj)}_bn{self.obj}_v00.pha')
-        t_range = (0,20)
+        t_range = (0,18)
         e_range = (325,9500)
         lc_data = cspec_obj.to_lightcurve(time_range=t_range, energy_range=e_range)
         _, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(10, 12), sharex=True, gridspec_kw={'hspace': 0})
@@ -287,6 +289,8 @@ class GRBSpectralAnalysis:
         for idx, (ax, param, color, scale) in enumerate(zip(axes, columns, colors, scales)):
             if idx > 0:
                 ax.errorbar(df['time_center'], df[param],
+                    yerr=[df[f'{param}_err_low']
+                    , df[f'{param}_err_high']],
                          fmt='.-', color=color, capsize=3, label=param)
                 ax.set_ylabel(param)
             ax.set_yscale(scale)
@@ -331,8 +335,7 @@ of Fermi‑GBM data, including:
     - energy_range_nai = (8, 300)   # NaI detector energy range (keV)
     - energy_range_bgo = (325, 9500) # BGO detector energy range (keV)
 
-The script will analyse the interval 1–20 s (hard‑coded in `main()`),divide it
-into 0.5‑s bins, fit each segment with the Band function, and write the results
+The script will analyse the interval, divide it bins, fit each segment with the Band function, and write the results
 to *my_results.csv*.""")
     parser.add_argument(
         "--obj", type=str, default="090926181",
@@ -366,7 +369,11 @@ to *my_results.csv*.""")
 
 def main() -> list[dict[str, Any]]:
     """Main function to run analysis"""
+
+    start_time:int = 1
+    end_time:int = 17
     args: Namespace = get_cmd_args()
+
     # Create analysis instance.
     grb_analysis = GRBSpectralAnalysis(
             args.obj,      ### object name
@@ -377,17 +384,20 @@ def main() -> list[dict[str, Any]]:
             fit_type=args.fit_func,
             ignore_bgo=args.ignore_bgo,
             include_errors=args.include_errors)
-    print("\nRunning time evolution analysis (1-20s)...")
-    # Run time evolution analysis.
-    results = grb_analysis.run_time_evolution_analysis(start_time=1, end_time=20)
+    
+    print("\nRunning time evolution analysis ({start_time}-{end_time}s)...")
+    results = grb_analysis.run_time_evolution_analysis(start_time=start_time, end_time=end_time)
+    
     print(f"\nTime evolution analysis complete!")
     print(f"Total time ranges analyzed: {len(results)}")
     print(f"Results saved to CSV file")
+    
     # Create columns depending on what fit function it's in use.
     columns: list[str] = ['A','Comptonized: Epeak','BlackBody: kT','PowerLaw: A']
     if args.fit_func == "band":
         columns = ['A','Epeak','alpha','beta']
     grb_analysis.graph(results, columns, show=args.show)
+    
     return results
 
 if __name__ == "__main__":
