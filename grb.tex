@@ -36,7 +36,14 @@
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
 % ...tus otros paquetes...
-\usepackage[hidelinks]{hyperref} % sin color ni recuadros
+% \usepackage[hyperlinks]{hyperref} % sin color ni recuadros
+\usepackage[]{hyperref} % a mi sí me gustan los colores :D -Aless
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+    }
 \urlstyle{same}                  % URLs con la misma tipografía del texto
 
 
@@ -65,6 +72,7 @@
 
 \journal{Astronomy $\&$ Computing}
 
+\setlength{\parskip}{3mm}
 
 \begin{document}
 
@@ -106,7 +114,7 @@
 %%             state={},
 %%             country={}}
 %%
-%% \affiliation[label2]{organization={},
+%% \affiliation[l\abel2]{organization={},
 %%             addressline={},
 %%             city={},
 %%             postcode={},
@@ -206,13 +214,13 @@ colapso de estrellas masivas como por la fusión de objetos compactos.
 
 \subsection{Historia}
 
-Los estallidos de rayos gamma (GRB) se identificaron por primera vez de manera fortuita a finales de la década de 1960, en el contexto de la Guerra Fría. Para verificar el cumplimiento del tratado que prohibía ensayos nucleares en el espacio, Estados Unidos lanzó los satélites \textit{Vela}, equipados con detectores de rayos X y gamma, lo que permitió registrar señales de alta energía no atribuibles a detonaciones nucleares \citep{bonnell1995}. El 2 de julio de 1967, dos de estos satélites (Vela~3 y Vela~4) detectaron un destello de rayos gamma sin correspondencia con ninguna firma conocida; el equipo de Los Alamos, encabezado por Ray Klebesadel, archivó el evento para un análisis posterior \citep{bonnell1995}.
+% Los estallidos de rayos gamma (GRB) se identificaron por primera vez de manera fortuita a finales de la década de 1960, en el contexto de la Guerra Fría. Para verificar el cumplimiento del tratado que prohibía ensayos nucleares en el espacio, Estados Unidos lanzó los satélites \textit{Vela}, equipados con detectores de rayos X y gamma, lo que permitió registrar señales de alta energía no atribuibles a detonaciones nucleares \citep{bonnell1995}. El 2 de julio de 1967, dos de estos satélites (Vela~3 y Vela~4) detectaron un destello de rayos gamma sin correspondencia con ninguna firma conocida; el equipo de Los Alamos, encabezado por Ray Klebesadel, archivó el evento para un análisis posterior \citep{bonnell1995}.
 
-Con el despliegue de versiones más avanzadas de los \textit{Vela} en los años siguientes, se detectaron múltiples destellos similares. A partir de las pequeñas diferencias en los tiempos de llegada entre naves separadas, el grupo estimó posiciones aproximadas de 16 eventos y demostró que su origen no era terrestre ni solar, sino que apuntaba al espacio profundo \citep{bonnell1995,klebesadel1973}. El hallazgo se comunicó públicamente en 1973 mediante el artículo \textit{Observations of Gamma-Ray Bursts of Cosmic Origin} en \textit{Astrophysical Journal Letters}, donde se reportó por primera vez la existencia de fuentes transitorias de rayos gamma de origen cósmico, estableciendo un nuevo campo de investigación que impulsaría la astrofísica de altas energías durante las décadas siguientes \citep{klebesadel1973}.
+% Con el despliegue de versiones más avanzadas de los \textit{Vela} en los años siguientes, se detectaron múltiples destellos similares. A partir de las pequeñas diferencias en los tiempos de llegada entre naves separadas, el grupo estimó posiciones aproximadas de 16 eventos y demostró que su origen no era terrestre ni solar, sino que apuntaba al espacio profundo \citep{bonnell1995,klebesadel1973}. El hallazgo se comunicó públicamente en 1973 mediante el artículo \textit{Observations of Gamma-Ray Bursts of Cosmic Origin} en \textit{Astrophysical Journal Letters}, donde se reportó por primera vez la existencia de fuentes transitorias de rayos gamma de origen cósmico, estableciendo un nuevo campo de investigación que impulsaría la astrofísica de altas energías durante las décadas siguientes \citep{klebesadel1973}.
 
-\subsection{Carecterización}
+% \subsection{Carecterización}
 
-Un GRB típico se presenta como un destello súbito e intensísimo de rayos gamma ---la forma más energética de la radiación electromagnética--- procedente de una localización remota del universo. Su duración varía enormemente: puede ir de fracciones de milisegundo a varios minutos, aunque la mayoría apenas se extiende por unos pocos segundos. Inmediatamente después del pulso gamma inicial, casi todos los GRB exhiben una post-luminiscencia (\textit{afterglow}) a longitudes de onda mayores: emisión en rayos X, ultravioleta, luz visible, infrarrojo e incluso radio, que puede persistir durante días, semanas o más conforme la explosión interactúa con el medio interestelar circundante. El descubrimiento del \textit{afterglow} en 1997, gracias al satélite italo-holandés \textit{BeppoSAX}, fue un hito que permitió localizar por primera vez la galaxia anfitriona de un GRB y medir su distancia cosmológica mediante el corrimiento al rojo. Esto confirmó que los GRB ocurren a miles de millones de años luz de la Tierra y liberan energías colosales: en unos pocos segundos un GRB puede emitir tanta energía como el Sol a lo largo de toda su vida (\(\sim 10^{10}\) años). Afortunadamente, pese a su potencia descomunal, estos eventos son extraordinariamente infrecuentes en una galaxia dada (quizá del orden de uno por millón de años por galaxia), de modo que es muy improbable que sucedan en la Vía Láctea en tiempos cercanos. Todos los GRB observados hasta hoy han sido extragalácticos y su distribución aparentemente isotrópica en el cielo respalda su origen a distancias cosmológicas, no dentro de nuestra galaxia. En casos raros se han detectado fenómenos análogos más débiles en la Vía Láctea, asociados a magnetares (estallidos de rayos gamma suaves), pero los GRB ``clásicos'' provienen de objetos situados en el universo distante \citep{Xu2009GRB}.
+% Un GRB típico se presenta como un destello súbito e intensísimo de rayos gamma ---la forma más energética de la radiación electromagnética--- procedente de una localización remota del universo. Su duración varía enormemente: puede ir de fracciones de milisegundo a varios minutos, aunque la mayoría apenas se extiende por unos pocos segundos. Inmediatamente después del pulso gamma inicial, casi todos los GRB exhiben una post-luminiscencia (\textit{afterglow}) a longitudes de onda mayores: emisión en rayos X, ultravioleta, luz visible, infrarrojo e incluso radio, que puede persistir durante días, semanas o más conforme la explosión interactúa con el medio interestelar circundante. El descubrimiento del \textit{afterglow} en 1997, gracias al satélite italo-holandés \textit{BeppoSAX}, fue un hito que permitió localizar por primera vez la galaxia anfitriona de un GRB y medir su distancia cosmológica mediante el corrimiento al rojo. Esto confirmó que los GRB ocurren a miles de millones de años luz de la Tierra y liberan energías colosales: en unos pocos segundos un GRB puede emitir tanta energía como el Sol a lo largo de toda su vida (\(\sim 10^{10}\) años). Afortunadamente, pese a su potencia descomunal, estos eventos son extraordinariamente infrecuentes en una galaxia dada (quizá del orden de uno por millón de años por galaxia), de modo que es muy improbable que sucedan en la Vía Láctea en tiempos cercanos. Todos los GRB observados hasta hoy han sido extragalácticos y su distribución aparentemente isotrópica en el cielo respalda su origen a distancias cosmológicas, no dentro de nuestra galaxia. En casos raros se han detectado fenómenos análogos más débiles en la Vía Láctea, asociados a magnetares (estallidos de rayos gamma suaves), pero los GRB ``clásicos'' provienen de objetos situados en el universo distante \citep{Xu2009GRB}.
 
 \subsection{Origen}
 
@@ -277,11 +285,13 @@ Además de \textit{Swift} y \textit{Fermi}, existe una amplia red internacional 
 
 % Utilizamos el módulo gdt-fermi \citep{GDT-Fermi} de las Gamma-Ray Data Tools \citep{GDT-Core} para el análisis de los datos y la realización de un encaje espectral.
 
-Para el análisis del destello de rayos gamma (GRB) bn090926181, se utilizó el paquete de software \texttt{Gamma-ray Data Tools} (GDT-Core) \citep{GDT-Core}. Se procesaron los datos provenientes de los detectores de Ioduro de Sodio (NaI) 3, 6 y 7, y del detector de Germanato de Bismuto (BGO) 0. Dichos datos fueron obtenidos del catálogo de Triggers de Fermi GBM \citep{von_Kienlin_2020} \citep{Gruber_2014} \citep{von_Kienlin_2014} \citep{Bhat_2016}. \\
+Durante la realización de este proyecto, se analizaron dos destellos de rayos gamma, caracterizados por los nombres bn090926181 y bn090424592. Puesto que el análisis final se hará sobre este segundo objeto, el proyecto se construyó alrededor del primero ya que este ha sido estudiado previamente en \cite{ackermann2011}.
 
-La primera etapa del análisis consistió en la generación de curvas de luz para estudiar la evolución temporal del destello. Específicamente, se crearon tres curvas de luz a partir de los datos del detector NaI 3, cubriendo las bandas de energía de 8-50 keV, 50-300 keV y 300-900 keV. Estas se representaron gráficamente sobre un eje temporal común para facilitar la comparación de la emisión en los diferentes rangos.\\
+Para el análisis del destello de rayos gamma (GRB) bn090926181, se utilizó el paquete de software \texttt{Gamma-ray Data Tools} (GDT-Core) \citep{GDT-Core}. Se procesaron los datos provenientes de los detectores de Ioduro de Sodio (NaI) 3, 6 y 7, y del detector de Germanato de Bismuto (BGO) 0. Dichos datos fueron obtenidos del catálogo de Triggers de Fermi GBM \citep{von_Kienlin_2020} \citep{Gruber_2014} \citep{von_Kienlin_2014} \citep{Bhat_2016}.
 
-Posteriormente, se procedió con el análisis espectral. Primero, se realizó un ajuste polinomial al fondo (\textit{background}) en las curvas de luz para establecer y sustraer el nivel de ruido base. A continuación, se seleccionó el intervalo de tiempo correspondiente al pico de emisión del destello. Los datos de este intervalo, junto con la matriz de respuesta instrumental (RSP2) de cada detector, se ajustaron utilizando un modelo de función de Band. Este procedimiento permite determinar los cinco parámetros del modelo: la amplitud, la energía del pico del espectro ($E_{\text{peak}}$), el índice fotónico de baja energía ($\alpha$), el índice fotónico de alta energía ($\beta$) y la energía de pivote.\\
+La primera etapa del análisis consistió en la generación de curvas de luz para estudiar la evolución temporal del destello. Específicamente, se crearon tres curvas de luz a partir de los datos del detector NaI 3, cubriendo las bandas de energía de 8-50 keV, 50-300 keV y 300-900 keV. Estas se representaron gráficamente sobre un eje temporal común para facilitar la comparación de la emisión en los diferentes rangos.
+
+Posteriormente, se procedió con el análisis espectral. Primero, se realizó un ajuste polinomial al fondo (\textit{background}) en las curvas de luz para establecer y sustraer el nivel de ruido base. A continuación, se seleccionó el intervalo de tiempo correspondiente al pico de emisión del destello. Los datos de este intervalo, junto con la matriz de respuesta instrumental (RSP2) de cada detector, se ajustaron utilizando un modelo de función de Band. Este procedimiento permite determinar los cinco parámetros del modelo: la amplitud (A), la energía del pico del espectro ($E_{\text{peak}}$), el índice fotónico de baja energía ($\alpha$), el índice fotónico de alta energía ($\beta$) y la energía de pivote.
 
 
 
