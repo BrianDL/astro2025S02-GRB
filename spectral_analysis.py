@@ -158,6 +158,9 @@ class GRBSpectralAnalysis:
             elif name== 'PowerLaw: index':
                 fit_function.max_values[i] = 2
                 fit_function.min_values[i] = -2.5
+                
+            elif name=='Comptonized: Epeak':
+                fit_function.max_values[i] = 5000
 
         print('VALORES_DE_PARAMETROS:')
         for idx, (par,free,min,max) in enumerate(zip(
@@ -384,10 +387,10 @@ to *my_results.csv*.""")
 def main() -> list[dict[str, Any]]:
     """Main function to run analysis"""
 
-    start_time  :float = 0.01
-    end_time    :float = 17.00
-
     args: Namespace = get_cmd_args()
+    
+    start_time  :float = 0.01
+    end_time    :float = 17.00  if args.obj=='090926181' else 5.5
 
     # Create analysis instance.
     grb_analysis = GRBSpectralAnalysis(
@@ -412,7 +415,7 @@ def main() -> list[dict[str, Any]]:
     # Create columns depending on what fit function it's in use.
     columns: list[str] = ['Comptonized: Epeak','BlackBody: kT','PowerLaw: index']
     if args.fit_func == "band":
-        columns = ['Epeak','alpha','beta', 'A']
+        columns = ['Epeak','alpha','beta']
     grb_analysis.graph(results, columns, show=args.show)
     
     return results
