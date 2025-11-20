@@ -155,9 +155,18 @@
 %             country={Guatemala}}
 
 \begin{abstract}
-Este estudio presenta un análisis espectral y temporal de los destellos de rayos gamma bn090926181 y bn090424592, utilizando datos de los detectores NaI y BGO del Fermi GBM.  Se generan curvas de luz en los rangos 8-50 keV, 50-300 keV y 300-900 keV y se realiza un ajuste del pico de emisión con el modelo de Band, complementado por componentes de cuerpo negro, modelo comptonizado y ley de potencias.  
-Se incluye un análisis resuelto en el tiempo que muestra la evolución de los parámetros espectrales y su correlación con la curva de luz del evento.  
-Los resultados indican que la energía pico y el índice $\alpha$ siguen la forma de la curva de luz, mientras que $\beta$ presenta mayor incertidumbre en intervalos muy cortos; la combinación multicomponente mejora la descripción del espectro observado. 
+Este estudio presenta un análisis espectral y temporal de los destellos de rayos
+gamma bn090926181 y bn090424592, utilizando datos de los detectores NaI y BGO
+del Fermi GBM.  Se generan curvas de luz en los rangos 8-50 keV, 50-300 keV y
+300-900 keV y se realiza un ajuste del pico de emisión con el modelo de Band,
+complementado por componentes de cuerpo negro, modelo comptonizado y ley de
+potencias.  
+Se incluye un análisis resuelto en el tiempo que muestra la evolución de los
+parámetros espectrales y su correlación con la curva de luz del evento.  
+Los resultados indican que la energía pico y el índice $\alpha$ siguen la forma
+de la curva de luz, mientras que $\beta$ presenta mayor incertidumbre en
+intervalos muy cortos; la combinación multicomponente mejora la descripción del
+espectro observado. 
 \end{abstract}
 
 %%Graphical abstract
@@ -399,7 +408,7 @@ generando chorros relativistas que producen los GRB de corta duración.
 Para caracterizar la emisión de los destellos de rayos gamma, se emplearon diversos modelos espectrales, tanto fenomenológicos como de motivación física. A continuación se describen las formulaciones matemáticas de cada función utilizada en este trabajo.
 
 \subsection{Función de Band}
-La función de Band es un modelo fenomenológico ampliamente utilizado para describir el espectro de la emisión inmediata (prompt) de los GRBs. Se define como una ley de potencias doble, suavemente conectada, y está parametrizada por el pico de energía del espectro $\nu F_{\nu}$. Su forma matemática es:
+La función de Band es un modelo fenomenológico ampliamente utilizado para describir el espectro de la emisión inmediata (prompt) de los GRBs. Se define como una ley de potencias doble, suavemente conectada, y está parametrizada por el pico de energía del espectro $\nu F_{\nu}$ \cite{GDT-Core}. Su forma matemática es:
 \begin{equation}
 F(E) = A
 \begin{cases}
@@ -420,7 +429,7 @@ Donde los parámetros del modelo son:
 \end{itemize}
 
 \subsection{Cuerpo Negro (BlackBody)}
-El modelo de cuerpo negro describe la emisión puramente térmica de un objeto en equilibrio. Su espectro está determinado únicamente por su temperatura y se expresa mediante la ley de Planck:
+El modelo de cuerpo negro describe la emisión puramente térmica de un objeto en equilibrio. Su espectro está determinado únicamente por su temperatura y se expresa mediante la ley de Planck \cite{GDT-Core}:
 \begin{equation}
 F(E) = A \frac{E^2}{e^{E/kT}-1}
 \label{eq:blackbody}
@@ -432,7 +441,7 @@ Sus parámetros son:
 \end{itemize}
 
 \subsection{Modelo Comptonizado (Comptonized)}
-Este modelo, también conocido como ley de potencias con un corte exponencial (\textit{cutoff power-law}), es a menudo utilizado para describir procesos de Comptonización, donde fotones de baja energía ganan energía a través de colisiones con una población de electrones calientes. La función se define como:
+Este modelo, también conocido como ley de potencias con un corte exponencial (\textit{cutoff power-law}), es a menudo utilizado para describir procesos de Comptonización, donde fotones de baja energía ganan energía a través de colisiones con una población de electrones calientes. La función se define como \cite{GDT-Core}:
 \begin{equation}
 F(E) = A \left(\frac{E}{E_{\text{piv}}}\right)^\lambda e^{-(2+\lambda)E/E_{\text{peak}}}
 \label{eq:comptonized}
@@ -446,7 +455,7 @@ Donde los parámetros son:
 \end{itemize}
 
 \subsection{Ley de Potencias (PowerLaw)}
-La ley de potencias es el modelo más simple para describir la radiación no térmica, como la emitida por procesos de sincrotrón. Su forma matemática es:
+La ley de potencias es el modelo más simple para describir la radiación no térmica, como la emitida por procesos de sincrotrón. Su forma matemática es \cite{GDT-Core}:
 \begin{equation}
 F(E) = A \left(\frac{E}{E_{\text{piv}}}\right)^{\lambda}
 \label{eq:powerlaw}
@@ -499,32 +508,32 @@ energía de pivote.
 
 Para examinar la evolución temporal de los parámetros espectrales, se implementó un análisis resuelto en el tiempo. Se desarrolló un procedimiento iterativo que segmenta la curva de luz en intervalos de tiempo de duración configurable. Para cada uno de estos intervalos, se aplicó el modelo de ajuste de Band. En los casos donde el algoritmo de ajuste no lograba la convergencia, el análisis avanzaba al siguiente intervalo hasta obtener un resultado estadísticamente válido. Los valores de los parámetros obtenidos en cada ajuste, junto con sus incertidumbres, se tabularon y graficaron en función del tiempo para estudiar su dinámica.
 
-Adicionalmente, se repitió este análisis espectral utilizando otros modelos teóricos para describir la emisión del destello. Específicamente, se aplicaron ajustes con una función de cuerpo negro (Blackbody), un modelo Comptonizado y una ley de potencias (PowerLaw). Para cada uno de los modelos evaluados, se generaron representaciones gráficas del espectro de energía, en la forma $\nu F_{\nu}$, superpuestas con el ajuste correspondiente para evaluar la calidad del mismo.
+Adicionalmente, se repitió este análisis espectral utilizando otros modelos teóricos para describir la emisión del destello. Específicamente, se aplicaron ajustes con una función de cuerpo negro (Blackbody), un modelo Comptonizado y una ley de potencias (PowerLaw). Para cada uno de los modelos evaluados, se generaron representaciones gráficas del espectro de energía, en la forma $\nu F_{\nu}$, superpuestas con el ajuste correspondiente para evaluar la calidad del mismo. Se graficaron los parámetros: de Comptonized, $E_{\text{peak}}$; BlackBody, $kT$; PowerLaw, $\lambda$ (índice de PowerLaw).
 
 \section{Resultados y Discusión}
 \label{resultados}
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{imagenes/lc_n3.png}
-    \caption{Curvas de luz del detector n3 para bn090424592 a tres rangos de energía.}
-    \label{fig:lc_n3}
+    \includegraphics[width=0.8\linewidth]{imagenes/lightcurve_n7_bn090424592.pdf}
+    \caption{Curvas de luz del detector n7 para bn090424592 a tres rangos de energía.}
+    \label{fig:lightcurve_n7_bn090424592}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.6\linewidth]{imagenes/fit_bnbn090424592_band.pdf}
     \caption{Ajuste espectral para el intervalo de tiempo donde el conteo fue pico para el objeto bn090424592. \textbf{Panel superior:} Muestra el espectro de energía en unidades de tasa de cuentas (puntos con barras de error) para los detectores NaI (n7, n8, nb) y BGO (b1). La línea continua sobrepuesta a los datos representa el mejor ajuste obtenido con el modelo [Nombre del Modelo, e.g., Band].
-        \textbf{Panel inferior:} Presenta los residuales del ajuste, calculados como la diferencia entre los datos observados y el modelo, en unidades de desviación estándar ($\sigma$). La distribución de los residuales en torno a cero indica que el modelo describe adecuadamente los datos en todo el rango de energía analizado.}
+        \textbf{Panel inferior:} Presenta los residuales del ajuste, calculados como la diferencia entre los datos observados y el modelo, en unidades de desviación estándar ($\sigma$).}
     \label{fig:fit_bnbn090424592_band}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{imagenes/espectro_vFv_bnbn090424592_band.pdf}
-    \includegraphics[width=0.5\linewidth]{imagenes/espectro_vFv_bnbn090424592_multiple.pdf}
+    \includegraphics[width=0.7\linewidth]{imagenes/espectro_vFv_bnbn090424592_band.pdf}
+    \includegraphics[width=0.7\linewidth]{imagenes/espectro_vFv_bnbn090424592_multiple.pdf}
     \caption{Visualización del modelo espectral ajustado en el formato $\nu F_{\nu}$. \textbf{(Superior)} El modelo de Band, que describe fenomenológicamente la emisión global del destello. El pico de esta curva representa la energía a la que se emite la mayor parte de la potencia ($E_{\text{peak}}$). \textbf{(Inferior)} Descomposición del espectro total en sus componentes físicos subyacentes: un cuerpo negro (\textit{BlackBody}), un modelo Comptonizado y una ley de potencias (\textit{PowerLaw}). Las líneas tenues para cada componente representan muestras de la distribución posterior de los parámetros, ilustrando la incertidumbre del ajuste. La suma de estos componentes (línea morada) reconstruye el espectro total observado.}
-    \label{fig:placeholder}
+    \label{fig:espectro_vFv}
 \end{figure}
 
 
@@ -543,9 +552,13 @@ Adicionalmente, se repitió este análisis espectral utilizando otros modelos te
     \label{fig:592-band}
 \end{figure}
 
-La Figura \ref{fig:181-band} muestra la evolución temporal de los parámetros de encaje de Band para el objeto bn090926181, los conteos por segundo
-(gris) y los ajustes para los parámetros de Energía pico (azul), $\alpha$
-(verde) y $\beta$ (rojo) del objeto bn090926181, y lo mismo vemos representado en la figura \ref{fig:592-band} para el encaje de Band para el objeto bn090424592. En ambos casos podemos observar que la energía y el parámetro alpha tienden a seguir la forma general de la curva de luz mientras que el parámetro beta tiene un comportamiento más errático, mostrando barras de error mucho más grandes cuando el tamaño del bin es muy pequeño, pero que se puede mejorar utilizando un tamaño de bin mayor al costo de hacer menos evidente la correlación entre los parámetros de energía y alpha con la curva de luz. Esto se puede observar al notar como beta tiene un mejor comportamiento en la figura \ref{fig:181-band} donde se utilizó un bin de $2$ s contra los $0.5$ s en todos los otros análisis.
+En la figura \ref{fig:lightcurve_n7_bn090424592} pueden apreciarse los cambios en la estructura de la curva de luz cuando se grafica a varios rangos de energía. En la figura \ref{fig:fit_bnbn090424592_band} se muestra el ajuste del modelo de Band para el objeto estudiado. La distribución de los residuales en torno a cero indica que el modelo describe adecuadamente los datos en todo el rango de energía analizado.
+
+En la figura \ref{fig:espectro_vFv} se muestran los espectros en formato $\nu F_\nu$ para los dos tipos de ajuste. En el recuadro inferior se ve que el modelo de PowerLaw no produce resultados útiles. Esto puede confirmarse con la figura \ref{fig:592-multi}, en donde en el último cuadro, se ve que las incertezas del índice de PowerLaw impiden hacer predicciones de valor.
+
+La Figura \ref{fig:181-band} muestra la evolución temporal de los parámetros de encaje de Band para el objeto bn090926181, los conteos por segundo (gris) y los ajustes para los parámetros de Energía pico (azul), $\alpha$ (verde) y $\beta$ (rojo) del objeto bn090926181, y lo mismo vemos representado en la figura \ref{fig:592-band} para el encaje de Band para el objeto bn090424592. En ambos casos podemos observar que la energía y el parámetro alpha tienden a seguir la forma general de la curva de luz mientras que el parámetro beta tiene un comportamiento más errático, mostrando barras de error mucho más grandes cuando el tamaño del bin es muy pequeño, pero que se puede mejorar utilizando un tamaño de bin mayor al costo de hacer menos evidente la correlación entre los parámetros de energía y alpha con la curva de luz. Esto se puede observar al notar como beta tiene un mejor comportamiento en la figura \ref{fig:181-band} donde se utilizó un bin de $2$ s contra los $0.5$ s en todos los otros análisis.
+
+Si bien el modelo físico de múltiples componentes describe adecuadamente el espectro del GRB bn090926181, como se ilustra en la Figura \ref{fig:181-multi}, la aplicación de este mismo modelo al GRB bn090424592 no arrojó un resultado de calidad comparable. La principal dificultad residió en la componente de ley de potencias (PowerLaw), la cual no pudo ser constreñida de forma robusta por el ajuste. Esta falta de convergencia se manifiesta en la alta incertidumbre de sus parámetros, tal como se evidencia en la distribución posterior correspondiente en la figura de análisis de resultados.
 
 \begin{figure}
     \centering
@@ -563,7 +576,7 @@ La Figura \ref{fig:181-band} muestra la evolución temporal de los parámetros d
 
 Ambos eventos fueron graficados por un período de $19$ s, $0-18$. Pero el análisis temporal del espectro se muestra en el rango $(0.1,17)$ s para el objeto bn090926181 y rango $(0.1,7.0)$ s para el objeto bn090424592, dado que este último tiene una señal mucho más débil. Como podemos observar en las gráficas \ref{fig:592-band}, \ref{fig:592-multi} la señal deja de ser diferenciable del ruido de fondo al rededor de $5$ segundos después del evento.
 
-En las figuras \ref{fig:181-multi} y \ref{fig:592-multi} representamos el modelo multicomponente, de nuevo mostrando la curva de luz de los eventos y luego la evolución espectral de los parámetros, en este caso, se puede observar que la energía del componente Comptomized y la temperatura del componente BlackBody se mueven reflejando la curva de luz del evento, mientras el índice fotónico del componente PowerLaw muestra un comportamiento con mayor incerteza.
+En las figuras \ref{fig:181-multi} y \ref{fig:592-multi} representamos el modelo multicomponente, de nuevo mostrando la curva de luz de los eventos y luego la evolución espectral de los parámetros, en este caso, se puede observar que la energía del componente Comptonized y la temperatura del componente BlackBody se mueven reflejando la curva de luz del evento, mientras el índice fotónico del componente PowerLaw muestra un comportamiento más difícil de predecir y de darle provecho.
 
 % Mostrar las gráficas.
 
