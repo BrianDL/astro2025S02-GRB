@@ -155,7 +155,9 @@
 %             country={Guatemala}}
 
 \begin{abstract}
-Se presenta un análisis espectral y temporal de los destellos de rayos gamma bn090926181 y bn090424592, utilizando datos de los detectores NaI y BGO del Fermi GBM.  Se generan curvas de luz en los rangos 8-50 keV, 50-300 keV y 300-900 keV y se realiza un ajuste del pico de emisión con el modelo de Band, complementado por componentes de cuerpo negro, modelo comptonizado y ley de potencias.  El estudio incluye un análisis resuelto en el tiempo que muestra la evolución de los parámetros espectrales ( $E_{\mathrm{peak}}$, $\alpha$, $\beta$ ) y su correlación con la luz del evento.  Los resultados indican que la energía pico y el índice $\alpha$ siguen la forma de la curva de luz, mientras que $\beta$ presenta mayor incertidumbre en intervalos muy cortos; la combinación multicomponente mejora la descripción del espectro observado. 
+Este estudio presenta un análisis espectral y temporal de los destellos de rayos gamma bn090926181 y bn090424592, utilizando datos de los detectores NaI y BGO del Fermi GBM.  Se generan curvas de luz en los rangos 8-50 keV, 50-300 keV y 300-900 keV y se realiza un ajuste del pico de emisión con el modelo de Band, complementado por componentes de cuerpo negro, modelo comptonizado y ley de potencias.  
+Se incluye un análisis resuelto en el tiempo que muestra la evolución de los parámetros espectrales y su correlación con la curva de luz del evento.  
+Los resultados indican que la energía pico y el índice $\alpha$ siguen la forma de la curva de luz, mientras que $\beta$ presenta mayor incertidumbre en intervalos muy cortos; la combinación multicomponente mejora la descripción del espectro observado. 
 \end{abstract}
 
 %%Graphical abstract
@@ -504,6 +506,13 @@ Adicionalmente, se repitió este análisis espectral utilizando otros modelos te
 
 \begin{figure}
     \centering
+    \includegraphics[width=0.8\linewidth]{imagenes/lc_n3.png}
+    \caption{Curvas de luz del detector n3 para bn090424592 a tres rangos de energía.}
+    \label{fig:lc_n3}
+\end{figure}
+
+\begin{figure}
+    \centering
     \includegraphics[width=0.6\linewidth]{imagenes/fit_bnbn090424592_band.pdf}
     \caption{Ajuste espectral para el intervalo de tiempo donde el conteo fue pico para el objeto bn090424592. \textbf{Panel superior:} Muestra el espectro de energía en unidades de tasa de cuentas (puntos con barras de error) para los detectores NaI (n7, n8, nb) y BGO (b1). La línea continua sobrepuesta a los datos representa el mejor ajuste obtenido con el modelo [Nombre del Modelo, e.g., Band].
         \textbf{Panel inferior:} Presenta los residuales del ajuste, calculados como la diferencia entre los datos observados y el modelo, en unidades de desviación estándar ($\sigma$). La distribución de los residuales en torno a cero indica que el modelo describe adecuadamente los datos en todo el rango de energía analizado.}
@@ -524,13 +533,13 @@ Adicionalmente, se repitió este análisis espectral utilizando otros modelos te
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{imagenes/grafica_band_181_2.0_conbgo.png}
-    \caption{Evolución temporal de los parámetros para el ajuste de tipo Band del objeto bn090926181}
+    \caption{Evolución temporal de los parámetros para el ajuste de tipo Band del objeto bn090926181. Se emplearon bines de 2.0 segundos.}
     \label{fig:181-band}
 \end{figure}
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{imagenes/grafica_band_592_0.5.png}
-    \caption{Evolución temporal de los parámetros para el ajuste de tipo Band del objeto bn090424592.}
+    \caption{Evolución temporal de los parámetros para el ajuste de tipo Band del objeto bn090424592. Se emplearon bines de 0.5 segundos.}
     \label{fig:592-band}
 \end{figure}
 
