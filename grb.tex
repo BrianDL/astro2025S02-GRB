@@ -45,6 +45,7 @@
     urlcolor=blue,
     }
 \urlstyle{same}                  % URLs con la misma tipografía del texto
+\usepackage{subcaption}
 
 
 %--- redefinir los encabezados ----------------------------------------
@@ -103,7 +104,7 @@
 %%            country={}}
 %% \fntext[label3]{}
 
-\title{Análisis bn090926181}
+\title{Análisis bn090424592}
 
 %% use optional labels to link authors explicitly to addresses:
 %% \author[label1,label2]{}
@@ -210,9 +211,9 @@ Posteriormente, la emisión tardía (afterglow) se manifiesta cuando el choque
 relativista interactúa con el medio circundante, produciendo una radiación más
 prolongada que se extiende desde los rayos X hasta el rango radiofónico.
 
-Comprender este doble comportamiento es esencial para identificar los
-mecanismos de producción de GRB, que pueden originarse tanto por el
-colapso de estrellas masivas como por la fusión de objetos compactos.
+% Comprender este doble comportamiento es esencial para identificar los
+% mecanismos de producción de GRB, que pueden originarse tanto por el
+% colapso de estrellas masivas como por la fusión de objetos compactos.
 
 \section{Antecedentes}
 \label{antecedentes}
@@ -220,7 +221,7 @@ colapso de estrellas masivas como por la fusión de objetos compactos.
 % Ajuste Band
 % 
 
-\subsection{Historia}
+%%\subsection{Historia}
 
 % Los estallidos de rayos gamma (GRB) se identificaron por primera vez de manera
 % fortuita a finales de la década de 1960, en el contexto de la Guerra Fría. Para
@@ -273,107 +274,106 @@ colapso de estrellas masivas como por la fusión de objetos compactos.
 % ``clásicos'' provienen de objetos situados en el universo distante
 % \citep{Xu2009GRB}.
 
-\subsection{Origen}
-
+%\subsection{Origen}
+Existen dos fuentes conocidas de GRBs, el colapso de estrellas masivas y la fusión de objetos compactos
 \vspace{0.8\baselineskip} % ajusta 0.3–1.0 a tu gusto
 
-\subsubsection{Colapso de estrellas masivas}
+\subsection{Colapso de estrellas masivas}
 Cuando una estrella muy masiva ($\sim 20 M_{\odot}$ o más) agota su combustible
 nuclear, su núcleo colapsa rápidamente formando un agujero negro o una
 estrella de neutrones. El colapso genera una hipernova y produce chorros
 relativistas que perforan la envoltura estelar, dando lugar a los GRB de
 larga duración cuya emisión gamma se extiende durante varios segundos o
 minutos.
-
-\subsubsection{Fusión de objetos compactos}
+\subsection{Fusión de objetos compactos}
 En sistemas binarios compuestos por dos estrellas de neutrones o por una
 estrella de neutrones y un agujero negro, la pérdida de energía por ondas
 gravitacionales hace que las órbitas se contraigan hasta la colisión.
 La coalescencia libera una gran cantidad de energía en menos de $2$ s,
 generando chorros relativistas que producen los GRB de corta duración.
 
-\subsection{Detección y observación}
+% \subsection{Detección y observación}
 
-Tras la publicación del descubrimiento de los GRB en 1973, numerosos
-experimentos espaciales se volcaron en acumular más eventos y desentrañar su
-origen. Un hito clave llegó entre 1991 y 2000 con el instrumento BATSE (Burst
-and Transient Source Experiment), a bordo del Observatorio de Rayos Gamma
-Compton de la NASA. Durante sus nueve años de operación, BATSE registró 2 704
-estallidos en todo el cielo y proporcionó la primera distribución estadística
-verdaderamente significativa de GRB. De forma sorprendente, esa distribución
-mostró que los estallidos llegan desde todas las direcciones con una casi
-perfecta isotropía, sin preferencia por el plano de la Vía Láctea. La ausencia
-de concentración galáctica, combinada con un déficit de GRB débiles (indicativo
-de un horizonte de detección), constituyó una evidencia contundente de su origen
-a distancias cosmológicas, más allá de nuestra galaxia. Aun así, durante buena
-parte de las décadas de 1980 y 1990 permaneció abierta la incógnita sobre qué
-fenómenos astrofísicos podían producir estallidos tan remotos y energéticos.\\
+% Tras la publicación del descubrimiento de los GRB en 1973, numerosos
+% experimentos espaciales se volcaron en acumular más eventos y desentrañar su
+% origen. Un hito clave llegó entre 1991 y 2000 con el instrumento BATSE (Burst
+% and Transient Source Experiment), a bordo del Observatorio de Rayos Gamma
+% Compton de la NASA. Durante sus nueve años de operación, BATSE registró 2 704
+% estallidos en todo el cielo y proporcionó la primera distribución estadística
+% verdaderamente significativa de GRB. De forma sorprendente, esa distribución
+% mostró que los estallidos llegan desde todas las direcciones con una casi
+% perfecta isotropía, sin preferencia por el plano de la Vía Láctea. La ausencia
+% de concentración galáctica, combinada con un déficit de GRB débiles (indicativo
+% de un horizonte de detección), constituyó una evidencia contundente de su origen
+% a distancias cosmológicas, más allá de nuestra galaxia. Aun así, durante buena
+% parte de las décadas de 1980 y 1990 permaneció abierta la incógnita sobre qué
+% fenómenos astrofísicos podían producir estallidos tan remotos y energéticos.\\
 
-El siguiente gran hito observacional fue logrado en febrero de 1997 por el
-satélite BeppoSAX, cuando detectó por primera vez la post-luminiscencia en rayos
-X de un GRB (evento GRB 970228) y rápidamente telescopios en tierra captaron su
-débil resplandor en luz visible. Esto permitió identificar la galaxia anfitriona
-y medir un corrimiento al rojo de \(z \approx 0.695\), confirmando sin lugar a
-dudas que los GRB provenían de miles de millones de años luz de distancia. A
-partir de ese momento, el ``cortafuegos'' que impedía investigar la naturaleza
-de los GRB (su localización imprecisa) desapareció, y se sucedieron
-descubrimientos que conectaron a los GRB largos con supernovas (por ejemplo, GRB
-980425 con SN 1998bw) y a los GRB cortos con galaxias elípticas envejecidas
-pobres en formación estelar (sugiriendo fusiones de objetos compactos).
+% El siguiente gran hito observacional fue logrado en febrero de 1997 por el
+% satélite BeppoSAX, cuando detectó por primera vez la post-luminiscencia en rayos
+% X de un GRB (evento GRB 970228) y rápidamente telescopios en tierra captaron su
+% débil resplandor en luz visible. Esto permitió identificar la galaxia anfitriona
+% y medir un corrimiento al rojo de \(z \approx 0.695\), confirmando sin lugar a
+% dudas que los GRB provenían de miles de millones de años luz de distancia. A
+% partir de ese momento, el ``cortafuegos'' que impedía investigar la naturaleza
+% de los GRB (su localización imprecisa) desapareció, y se sucedieron
+% descubrimientos que conectaron a los GRB largos con supernovas (por ejemplo, GRB
+% 980425 con SN 1998bw) y a los GRB cortos con galaxias elípticas envejecidas
+% pobres en formación estelar (sugiriendo fusiones de objetos compactos).
 
-En la actualidad, la detección de GRB se realiza de forma rutinaria con
-observatorios espaciales dedicados. El Neil Gehrels \textit{Swift} Observatory
-(misión \textit{Swift} de la NASA, lanzada en 2004) marcó un parteaguas al
-incorporar un sistema de alerta y seguimiento automático. \textit{Swift}
-incorpora un detector de campo amplio de rayos gamma, el \textit{Burst Alert
-Telescope} (BAT), que descubre en promedio \(\sim 100\) GRB por año y determina
-su posición en el cielo con una precisión de pocos minutos de arco en cuestión
-de segundos. \citep{NASA_Swift_About} Acto seguido, la nave se reorienta de
-manera autónoma en menos de \(\sim 90\) segundos para apuntar sus telescopios de
-rayos X (XRT) y ultravioleta/óptico (UVOT) hacia la fuente y observar el
-\textit{afterglow} desde sus fases iniciales. \citep{NASA_Swift_About} Gracias a
-esta estrategia ``rápida'' (de ahí el nombre \textit{Swift}), por primera vez
-fue posible registrar la emisión remanente de numerosos GRB en múltiples
-longitudes de onda casi en tiempo real, obteniendo curvas de luz y espectros
-detallados que permiten inferir propiedades físicas del estallido (energía,
-colimación, entorno circundante, etc.). \textit{Swift} ha aportado miles de
-detecciones y un flujo de datos abierto a la comunidad, consolidándose hasta hoy
-como uno de los pilares en la investigación de estos eventos.\\
+% En la actualidad, la detección de GRB se realiza de forma rutinaria con
+% observatorios espaciales dedicados. El Neil Gehrels \textit{Swift} Observatory
+% (misión \textit{Swift} de la NASA, lanzada en 2004) marcó un parteaguas al
+% incorporar un sistema de alerta y seguimiento automático. \textit{Swift}
+% incorpora un detector de campo amplio de rayos gamma, el \textit{Burst Alert
+% Telescope} (BAT), que descubre en promedio \(\sim 100\) GRB por año y determina
+% su posición en el cielo con una precisión de pocos minutos de arco en cuestión
+% de segundos. \citep{NASA_Swift_About} Acto seguido, la nave se reorienta de
+% manera autónoma en menos de \(\sim 90\) segundos para apuntar sus telescopios de
+% rayos X (XRT) y ultravioleta/óptico (UVOT) hacia la fuente y observar el
+% \textit{afterglow} desde sus fases iniciales. \citep{NASA_Swift_About} Gracias a
+% esta estrategia ``rápida'' (de ahí el nombre \textit{Swift}), por primera vez
+% fue posible registrar la emisión remanente de numerosos GRB en múltiples
+% longitudes de onda casi en tiempo real, obteniendo curvas de luz y espectros
+% detallados que permiten inferir propiedades físicas del estallido (energía,
+% colimación, entorno circundante, etc.). \textit{Swift} ha aportado miles de
+% detecciones y un flujo de datos abierto a la comunidad, consolidándose hasta hoy
+% como uno de los pilares en la investigación de estos eventos.\\
 
-Otra misión fundamental es el Telescopio Espacial de Rayos Gamma Fermi (NASA,
-lanzado en 2008), dotado de dos instrumentos complementarios: el Gamma-Ray Burst
-Monitor (GBM), sensible a rayos X/\(\gamma\) entre \(8~\mathrm{keV}\) y
-\(40~\mathrm{MeV}\), y el Large Area Telescope (LAT), que detecta fotones de
-energías más altas (desde \(\sim 20~\mathrm{MeV}\) hasta \(>100~\mathrm{GeV}\)).
-El GBM registra en torno a \(\sim 240\) GRB al año, cubriendo prácticamente todo
-el cielo no oculto por la Tierra, lo que lo convierte en el instrumento con
-mayor número de detecciones. El LAT, por su parte, observa los GRB más
-energéticos (\(\approx 10\) eventos anuales por encima de \(30~\mathrm{MeV}\)),
-haciendo posible estudiar la componente de alta energía de los estallidos. Los
-datos de Fermi han mostrado que algunos GRB emiten fotones \(\geq
-100~\mathrm{GeV}\) con un ligero retardo respecto de la emisión de menor
-energía, lo que sugiere procesos adicionales durante la evolución del chorro
-relativista. Un caso emblemático fue GRB 130427A, observado por Fermi y
-\textit{Swift}, que produjo un fotón de \(\approx 95~\mathrm{GeV}\) y mantuvo
-emisión gamma durante casi 24 horas, desafiando los modelos teóricos
-tradicionales y ayudando a refinar las teorías sobre cómo los chorros de GRB
-transfieren energía a su entorno. \emph{(Nota: el apodo “BOAT, Brightest Of All
-Time” suele usarse para GRB 221009A, detectado en 2022.)}\\
+% Otra misión fundamental es el Telescopio Espacial de Rayos Gamma Fermi (NASA,
+% lanzado en 2008), dotado de dos instrumentos complementarios: el Gamma-Ray Burst
+% Monitor (GBM), sensible a rayos X/\(\gamma\) entre \(8~\mathrm{keV}\) y
+% \(40~\mathrm{MeV}\), y el Large Area Telescope (LAT), que detecta fotones de
+% energías más altas (desde \(\sim 20~\mathrm{MeV}\) hasta \(>100~\mathrm{GeV}\)).
+% El GBM registra en torno a \(\sim 240\) GRB al año, cubriendo prácticamente todo
+% el cielo no oculto por la Tierra, lo que lo convierte en el instrumento con
+% mayor número de detecciones. El LAT, por su parte, observa los GRB más
+% energéticos (\(\approx 10\) eventos anuales por encima de \(30~\mathrm{MeV}\)),
+% haciendo posible estudiar la componente de alta energía de los estallidos. Los
+% datos de Fermi han mostrado que algunos GRB emiten fotones \(\geq
+% 100~\mathrm{GeV}\) con un ligero retardo respecto de la emisión de menor
+% energía, lo que sugiere procesos adicionales durante la evolución del chorro
+% relativista. Un caso emblemático fue GRB 130427A, observado por Fermi y
+% \textit{Swift}, que produjo un fotón de \(\approx 95~\mathrm{GeV}\) y mantuvo
+% emisión gamma durante casi 24 horas, desafiando los modelos teóricos
+% tradicionales y ayudando a refinar las teorías sobre cómo los chorros de GRB
+% transfieren energía a su entorno. \emph{(Nota: el apodo “BOAT, Brightest Of All
+% Time” suele usarse para GRB 221009A, detectado en 2022.)}\\
 
 
-Además de \textit{Swift} y \textit{Fermi}, existe una amplia red internacional
-de detectores dedicados a los GRB. La ESA opera desde 2002 el observatorio
-INTEGRAL, que ha registrado decenas de estallidos y, junto con \textit{Fermi},
-fue clave en la observación del GRB 170817A en 2017. \citep{ESAheic1717b}
-Misiones como HETE-2 (NASA/Japón) y AGILE (Italia) aportaron de forma decisiva
-en la década de 2000, y hoy una nueva generación de satélites ---por ejemplo,
-SVOM (franco-chino), Insight-HXMT (China), GLAST, entre otros--- continúa la
-búsqueda con capacidades de localización mejoradas. En tierra, numerosos
-telescopios ópticos robotizados (como el conjunto ROTSE o la red LCOGT) y
-radiotelescopios se encargan de seguir los \textit{afterglows} tras las alertas.
-Gracias a este despliegue tecnológico, en la actualidad se detecta al menos un
-GRB al día en algún punto del universo observable, y es posible estudiarlos en
-prácticamente todas las bandas del espectro electromagnético.\\
+% Además de \textit{Swift} y \textit{Fermi}, existe una amplia red internacional
+% de detectores dedicados a los GRB. La ESA opera desde 2002 el observatorio
+% INTEGRAL, que ha registrado decenas de estallidos y, junto con \textit{Fermi},
+% fue clave en la observación del GRB 170817A en 2017. \citep{ESAheic1717b}
+% Misiones como HETE-2 (NASA/Japón) y AGILE (Italia) aportaron de forma decisiva
+% en la década de 2000, y hoy una nueva generación de satélites ---por ejemplo,
+% SVOM (franco-chino), Insight-HXMT (China), GLAST, entre otros--- continúa la
+% búsqueda con capacidades de localización mejoradas. En tierra, numerosos
+% telescopios ópticos robotizados (como el conjunto ROTSE o la red LCOGT) y
+% radiotelescopios se encargan de seguir los \textit{afterglows} tras las alertas.
+% Gracias a este despliegue tecnológico, en la actualidad se detecta al menos un
+% GRB al día en algún punto del universo observable, y es posible estudiarlos en
+% prácticamente todas las bandas del espectro electromagnético.\\
 
 
 % \begin{table} %%%% example table
@@ -392,6 +392,70 @@ prácticamente todas las bandas del espectro electromagnético.\\
 % \label{Table1}
 % \end{table}
 
+\section{Modelos Espectrales Utilizados}
+\label{sec:modelos_espectrales}
+
+Para caracterizar la emisión de los destellos de rayos gamma, se emplearon diversos modelos espectrales, tanto fenomenológicos como de motivación física. A continuación se describen las formulaciones matemáticas de cada función utilizada en este trabajo.
+
+\subsection{Función de Band}
+La función de Band es un modelo fenomenológico ampliamente utilizado para describir el espectro de la emisión inmediata (prompt) de los GRBs. Se define como una ley de potencias doble, suavemente conectada, y está parametrizada por el pico de energía del espectro $\nu F_{\nu}$. Su forma matemática es:
+\begin{equation}
+F(E) = A
+\begin{cases}
+\left(\frac{E}{E_{\text{piv}}}\right)^\alpha e^{-(2+\alpha)E/E_{\text{peak}}},
+& \text{si } E < \frac{(\alpha-\beta)E_{\text{peak}}}{2+\alpha} \\
+\left(\frac{(\alpha-\beta)E_{\text{peak}}}{(2+\alpha)E_{\text{piv}}}\right)^{\alpha-\beta}
+e^{\beta-\alpha}\left(\frac{E}{E_{\text{piv}}}\right)^\beta, & \text{en otro caso}
+\end{cases}
+\label{eq:band}
+\end{equation}
+Donde los parámetros del modelo son:
+\begin{itemize}
+    \item $A$: La amplitud, en unidades de $\text{ph} \cdot \text{s}^{-1} \cdot \text{cm}^{-2} \cdot \text{keV}^{-1}$.
+    \item $E_{\text{peak}}$: La energía del pico del espectro $\nu F_{\nu}$, en keV.
+    \item $\alpha$: El índice fotónico de bajas energías.
+    \item $\beta$: El índice fotónico de altas energías.
+    \item $E_{\text{piv}}$: La energía pivote, usualmente fijada en 100 keV.
+\end{itemize}
+
+\subsection{Cuerpo Negro (BlackBody)}
+El modelo de cuerpo negro describe la emisión puramente térmica de un objeto en equilibrio. Su espectro está determinado únicamente por su temperatura y se expresa mediante la ley de Planck:
+\begin{equation}
+F(E) = A \frac{E^2}{e^{E/kT}-1}
+\label{eq:blackbody}
+\end{equation}
+Sus parámetros son:
+\begin{itemize}
+    \item $A$: La amplitud o constante de normalización, en $\text{ph} \cdot \text{s}^{-1} \cdot \text{cm}^{-2} \cdot \text{keV}^{-1}$.
+    \item $kT$: La temperatura del cuerpo negro, en unidades de keV.
+\end{itemize}
+
+\subsection{Modelo Comptonizado (Comptonized)}
+Este modelo, también conocido como ley de potencias con un corte exponencial (\textit{cutoff power-law}), es a menudo utilizado para describir procesos de Comptonización, donde fotones de baja energía ganan energía a través de colisiones con una población de electrones calientes. La función se define como:
+\begin{equation}
+F(E) = A \left(\frac{E}{E_{\text{piv}}}\right)^\lambda e^{-(2+\lambda)E/E_{\text{peak}}}
+\label{eq:comptonized}
+\end{equation}
+Donde los parámetros son:
+\begin{itemize}
+    \item $A$: La amplitud, en $\text{ph} \cdot \text{s}^{-1} \cdot \text{cm}^{-2} \cdot \text{keV}^{-1}$.
+    \item $E_{\text{peak}}$: La energía del pico del espectro $\nu F_{\nu}$, que corresponde a la energía de corte o de plegado (\textit{e-folding energy}), en keV.
+    \item $\lambda$: El índice fotónico de la ley de potencias.
+    \item $E_{\text{piv}}$: La energía pivote, fijada en 100 keV.
+\end{itemize}
+
+\subsection{Ley de Potencias (PowerLaw)}
+La ley de potencias es el modelo más simple para describir la radiación no térmica, como la emitida por procesos de sincrotrón. Su forma matemática es:
+\begin{equation}
+F(E) = A \left(\frac{E}{E_{\text{piv}}}\right)^{\lambda}
+\label{eq:powerlaw}
+\end{equation}
+Sus parámetros son:
+\begin{itemize}
+    \item $A$: La amplitud en la energía pivote, en $\text{ph} \cdot \text{s}^{-1} \cdot \text{cm}^{-2} \cdot \text{keV}^{-1}$.
+    \item $\lambda$: El índice fotónico, que describe la pendiente del espectro.
+    \item $E_{\text{piv}}$: La energía pivote, en keV, en la cual se normaliza la amplitud. Generalmente se fija en 100 keV.
+\end{itemize}
 
 \section{Metodología}
 \label{metodología}
@@ -400,8 +464,8 @@ prácticamente todas las bandas del espectro electromagnético.\\
 
 % Utilizamos el módulo gdt-fermi \citep{GDT-Fermi} de las Gamma-Ray Data Tools \citep{GDT-Core} para el análisis de los datos y la realización de un encaje espectral.
 
-Durante la realización de este proyecto, se analizaron dos destellos de rayos
-gamma, caracterizados por los nombres bn090926181 y bn090424592. Puesto que el
+Se analizaron dos destellos de rayos
+gamma, bn090926181 y bn090424592. Puesto que el
 análisis final se hará sobre este segundo objeto, el proyecto se construyó
 alrededor del primero ya que este ha sido estudiado previamente en
 \cite{ackermann2011}.
@@ -409,7 +473,7 @@ alrededor del primero ya que este ha sido estudiado previamente en
 Para el análisis de los destellos de rayos gamma (GRB), se utilizó el paquete de
 software \texttt{Gamma-ray Data Tools} (GDT-Core) \citep{GDT-Core}. Se
 procesaron los datos provenientes de los detectores de Ioduro de Sodio (NaI) 3,
-6 y 7, y del detector de Germanato de Bismuto (BGO) 0 para el objeto
+6 y 7, y del detector de Germanato de Bismuto (BGO) 0, para el objeto
 bn090926181. Dichos datos fueron obtenidos del catálogo de Triggers de Fermi GBM
 \citep{von_Kienlin_2020} \citep{Gruber_2014} \citep{von_Kienlin_2014}
 \citep{Bhat_2016}.
@@ -439,41 +503,62 @@ Adicionalmente, se repitió este análisis espectral utilizando otros modelos te
 \section{Resultados y Discusión}
 \label{resultados}
 
-% Explicación de gráficas.
-La Figura \ref{fig:181-band} muestra los conteos por segundo
-(gris) y los ajustes para los parámetros de Energía pico (azul), $\alpha$
-(verde) y $\beta$ (rojo) del objeto bn090926181. Las cuatro gráficas comparten
-el mismo eje horizontal, que representa el tiempo en segundos.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{imagenes/fit_bnbn090424592_band.pdf}
+    \caption{Ajuste espectral para el intervalo de tiempo donde el conteo fue pico para el objeto bn090424592. \textbf{Panel superior:} Muestra el espectro de energía en unidades de tasa de cuentas (puntos con barras de error) para los detectores NaI (n7, n8, nb) y BGO (b1). La línea continua sobrepuesta a los datos representa el mejor ajuste obtenido con el modelo [Nombre del Modelo, e.g., Band].
+        \textbf{Panel inferior:} Presenta los residuales del ajuste, calculados como la diferencia entre los datos observados y el modelo, en unidades de desviación estándar ($\sigma$). La distribución de los residuales en torno a cero indica que el modelo describe adecuadamente los datos en todo el rango de energía analizado.}
+    \label{fig:fit_bnbn090424592_band}
+\end{figure}
 
-% Mostrar las gráficas.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{imagenes/espectro_vFv_bnbn090424592_band.pdf}
+    \includegraphics[width=0.5\linewidth]{imagenes/espectro_vFv_bnbn090424592_multiple.pdf}
+    \caption{Visualización del modelo espectral ajustado en el formato $\nu F_{\nu}$. \textbf{(Superior)} El modelo de Band, que describe fenomenológicamente la emisión global del destello. El pico de esta curva representa la energía a la que se emite la mayor parte de la potencia ($E_{\text{peak}}$). \textbf{(Inferior)} Descomposición del espectro total en sus componentes físicos subyacentes: un cuerpo negro (\textit{BlackBody}), un modelo Comptonizado y una ley de potencias (\textit{PowerLaw}). Las líneas tenues para cada componente representan muestras de la distribución posterior de los parámetros, ilustrando la incertidumbre del ajuste. La suma de estos componentes (línea morada) reconstruye el espectro total observado.}
+    \label{fig:placeholder}
+\end{figure}
+
+
+% Explicación de gráficas.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{imagenes/grafica_band_181_2.0_conbgo.png}
-    \caption{Caption}
+    \caption{Evolución temporal de los parámetros para el ajuste de tipo Band del objeto bn090926181}
     \label{fig:181-band}
 \end{figure}
-
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{imagenes/grafica_band_592_0.5.png}
-    \caption{Caption}
+    \caption{Evolución temporal de los parámetros para el ajuste de tipo Band del objeto bn090424592.}
     \label{fig:592-band}
 \end{figure}
+
+La Figura \ref{fig:181-band} muestra la evolución temporal de los parámetros de encaje de Band para el objeto bn090926181, los conteos por segundo
+(gris) y los ajustes para los parámetros de Energía pico (azul), $\alpha$
+(verde) y $\beta$ (rojo) del objeto bn090926181, y lo mismo vemos representado en la figura \ref{fig:592-band} para el encaje de Band para el objeto bn090424592. En ambos casos podemos observar que la energía y el parámetro alpha tienden a seguir la forma general de la curva de luz mientras que el parámetro beta tiene un comportamiento más errático, mostrando barras de error mucho más grandes cuando el tamaño del bin es muy pequeño, pero que se puede mejorar utilizando un tamaño de bin mayor al costo de hacer menos evidente la correlación entre los parámetros de energía y alpha con la curva de luz. Esto se puede observar al notar como beta tiene un mejor comportamiento en la figura \ref{fig:181-band} donde se utilizó un bin de $2$ s contra los $0.5$ s en todos los otros análisis.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{imagenes/grafica_multi_181_0.5s.png}
-    \caption{Caption}
+    \caption{Evolución temporal de los parámetros para el ajuste de tipo Multicomponente del objeto bn090926181}
     \label{fig:181-multi}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{imagenes/grafica_multi_592_0.5s.png}
-    \caption{Caption}
+    \caption{Evolución temporal de los parámetros para el ajuste de tipo Multicomponente del objeto bn090926181}
     \label{fig:592-multi}
 \end{figure}
+
+Ambos eventos fueron graficados por un período de $19$ s, $0-18$. Pero el análisis temporal del espectro se muestra en el rango $(0.1,17)$ s para el objeto bn090926181 y rango $(0.1,7.0)$ s para el objeto bn090424592, dado que este último tiene una señal mucho más débil. Como podemos observar en las gráficas \ref{fig:592-band}, \ref{fig:592-multi} la señal deja de ser diferenciable del ruido de fondo al rededor de $5$ segundos después del evento.
+
+En las figuras \ref{fig:181-multi} y \ref{fig:592-multi} representamos el modelo multicomponente, de nuevo mostrando la curva de luz de los eventos y luego la evolución espectral de los parámetros, en este caso, se puede observar que la energía del componente Comptomized y la temperatura del componente BlackBody se mueven reflejando la curva de luz del evento, mientras el índice fotónico del componente PowerLaw muestra un comportamiento con mayor incerteza.
+
+% Mostrar las gráficas.
+
 
 % Discusión de las gráficas.
 
